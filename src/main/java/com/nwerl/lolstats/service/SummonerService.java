@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.service;
 
-import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
 import com.nwerl.lolstats.web.dto.SummonerDTO;
 import lombok.RequiredArgsConstructor;
