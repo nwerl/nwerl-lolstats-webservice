@@ -2,11 +2,10 @@ package com.nwerl.lolstats.web.dto;
 
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import lombok.Builder;
+import lombok.Data;
 
-import javax.xml.stream.FactoryConfigurationError;
-
-
-public class SummonerDTO {
+@Data
+public class SummonerDto {
     private String id;
     private String accountId;
     private String puuid;
@@ -18,7 +17,7 @@ public class SummonerDTO {
     private Long summonerLevel;
 
     @Builder
-    public SummonerDTO(String id, String accountId, String puuid, String name,
+    public SummonerDto(String id, String accountId, String puuid, String name,
                        Long profileIconId, Long revisionDate, Long summonerLevel) {
         this.id = id;
         this.accountId = accountId;
@@ -27,6 +26,16 @@ public class SummonerDTO {
         this.profileIconId = profileIconId;
         this.revisionDate = revisionDate;
         this.summonerLevel = summonerLevel;
+    }
+
+    public SummonerDto(Summoner summoner) {
+        this.id = summoner.getId();
+        this.accountId = summoner.getAccountId();
+        this.puuid = summoner.getPuuid();
+        this.name = summoner.getName();
+        this.profileIconId = summoner.getProfileIconId();
+        this.revisionDate = summoner.getRevisionDate();
+        this.summonerLevel = summoner.getSummonerLevel();
     }
 
     public Summoner toEntity() {
