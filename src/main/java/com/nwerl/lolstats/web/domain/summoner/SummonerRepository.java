@@ -5,5 +5,6 @@ import java.util.List;
 
 public interface SummonerRepository extends MongoRepository<Summoner, String> {
     public List<Summoner> findAll();
-    public List<Summoner> findByName(String name);
+    public Summoner findByName(String name);
+    public Boolean existsByName(String name);
 }
