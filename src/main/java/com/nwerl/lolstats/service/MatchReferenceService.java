@@ -17,7 +17,7 @@ public class MatchReferenceService {
 
     public Boolean updateMatchReferenceByName(String name) {
         try {
-            matchReferenceRepository.saveAll(riotApiRequestService.getMatchlistByName(summonerService.findByName(name).getName()).stream()
+            matchReferenceRepository.saveAll(riotApiRequestService.getMatchReferencesByName(summonerService.findByName(name).getName()).stream()
                     .map(MatchReferenceDto::toEntity)
                     .collect(Collectors.toList()));
         }
