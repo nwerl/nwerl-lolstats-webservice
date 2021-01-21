@@ -1,6 +1,8 @@
 package com.nwerl.lolstats.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nwerl.lolstats.web.domain.match.Match;
+import com.nwerl.lolstats.web.domain.match.MatchReferenceRepository;
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
 import com.nwerl.lolstats.web.dto.MatchReferenceDto;
 import com.nwerl.lolstats.web.dto.MatchlistDto;
@@ -38,5 +40,10 @@ public class RiotApiRequestService {
     public List<MatchReferenceDto> getMatchReferencesByName(String name) {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/" + summonerRepository.findByName(name).getAccountId() + "?api_key=" + apiKey;
         return objectMapper.convertValue(apiRequestService.get(url, HttpHeaders.EMPTY).getBody(), MatchlistDto.class).getMatches();
+    }
+
+    public Match getMatchByGameId(Long gameId) {
+        String url = "https://kr.api.riotgames.com/lol/match/v4/matches/" + gameId + "?api_key=" + apiKey;
+        return objectMapper.convertValue(apiRequestService.get(url, HttpHeaders.EMPTY).getBody(), Match.class);
     }
 }
