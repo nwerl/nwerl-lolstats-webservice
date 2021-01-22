@@ -2,6 +2,7 @@ package com.nwerl.lolstats.web.domain.match;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 @Data
 @Document(collection = "match")
 public class Match {
+    @Id
     private Long gameId;
     private List<ParticipantIdentity> participantIdentities;
     private Integer queueId;
