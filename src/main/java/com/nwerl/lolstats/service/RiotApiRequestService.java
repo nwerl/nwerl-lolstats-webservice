@@ -2,8 +2,6 @@ package com.nwerl.lolstats.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.domain.match.MatchReferenceRepository;
-import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
 import com.nwerl.lolstats.web.dto.MatchReferenceDto;
 import com.nwerl.lolstats.web.dto.MatchlistDto;
 import com.nwerl.lolstats.web.dto.SummonerDto;
@@ -19,17 +17,14 @@ public class RiotApiRequestService {
     private final String apiKey;
     private final ApiRequestService<String> apiRequestService;
     private final ObjectMapper objectMapper;
-    private final SummonerRepository summonerRepository;
 
     @Autowired
     public RiotApiRequestService(@Value("${apikey}")String apiKey,
                                  ApiRequestService<String> apiRequestService,
-                                 ObjectMapper objectMapper,
-                                 SummonerRepository summonerRepository) {
+                                 ObjectMapper objectMapper) {
         this.apiKey = apiKey;
         this.apiRequestService = apiRequestService;
         this.objectMapper = objectMapper;
-        this.summonerRepository = summonerRepository;
     }
 
     public SummonerDto getSummonerInfoByName(String name) {
@@ -37,8 +32,11 @@ public class RiotApiRequestService {
         return objectMapper.convertValue(apiRequestService.get(url, HttpHeaders.EMPTY).getBody(), SummonerDto.class);
     }
 
-    public List<MatchReferenceDto> getMatchReferencesByName(String name) {
-        String url = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/" + summonerRepository.findByName(name).getAccountId() + "?api_key=" + apiKey;
+    public List<MatchReferenceDto> getMatchReferencesByAccountId(String accountId) {
+        String url = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"
+                + accountId
+                + "?api_key=" + apiKey;
+        System.out.println(url);
         return objectMapper.convertValue(apiRequestService.get(url, HttpHeaders.EMPTY).getBody(), MatchlistDto.class).getMatches();
     }
 
