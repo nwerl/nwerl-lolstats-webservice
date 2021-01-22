@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.web;
 
-import com.nwerl.lolstats.service.MatchReferenceService;
+import com.nwerl.lolstats.service.MatchService;
 import com.nwerl.lolstats.service.SummonerService;
 import com.nwerl.lolstats.web.dto.MatchReferenceDto;
 import com.nwerl.lolstats.web.dto.SummonerDto;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class RiotApiRequestController {
     private final SummonerService summonerService;
-    private final MatchReferenceService matchReferenceService;
+    private final MatchService matchService;
 
     @GetMapping("/api/v1/get/summonerinfo/{name}")
     public SummonerDto getSummonerInfo(@PathVariable String name) {
@@ -24,11 +24,11 @@ public class RiotApiRequestController {
 
     @GetMapping("/api/v1/get/matchlists/{name}")
     public List<MatchReferenceDto> getMatchReferences(@PathVariable String name) {
-        return matchReferenceService.updateMatchReferenceByName(name);
+        return matchService.updateMatchReferenceByName(name);
     }
 
     @GetMapping("/api/v1/get/matches/{name}")
-    public Boolean getMatches(@PathVariable String name) throws InterruptedException {
-        return matchReferenceService.updateMatchByName(name);
+    public Boolean getMatches(@PathVariable String name) {
+        return matchService.updateMatchByName(name);
     }
 }
