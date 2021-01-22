@@ -3,12 +3,14 @@ package com.nwerl.lolstats.web.domain.match;
 import com.nwerl.lolstats.web.dto.MatchReferenceDto;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Builder
 @Data
 @Document(collection = "matchReference")
 public class MatchReference {
+    @Id
     private Long gameId;
     private String role;
     private Integer season;
