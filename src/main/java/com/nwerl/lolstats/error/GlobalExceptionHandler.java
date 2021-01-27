@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.TooManyRequests.class)
     public ResponseEntity<ErrorResponse> tooManyRequest(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.API_TOO_MANY_REQUEST);
-        log.error("Called Api responsed: {}", ErrorCode.API_TOO_MANY_REQUEST.getStatus(), ErrorCode.API_TOO_MANY_REQUEST.getMessage());
+        log.error("Called Api responsed: {} {}", ErrorCode.API_TOO_MANY_REQUEST.getStatus(), ErrorCode.API_TOO_MANY_REQUEST.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.TOO_MANY_REQUESTS);
     }
 
