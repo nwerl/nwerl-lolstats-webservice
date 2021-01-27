@@ -51,7 +51,6 @@ public class RiotApiRequestService {
 
     public Match getMatchByGameId(Long gameId) {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matches/" + gameId + "?api_key=" + apiKey;
-        log.info("Call RiotApi to Get Matches");
         return restTemplate.getForObject(url, Match.class);
     }
 }
