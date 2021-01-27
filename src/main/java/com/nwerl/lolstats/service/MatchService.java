@@ -44,11 +44,7 @@ public class MatchService {
                 if (!matchRepository.existsByGameId(matchReferenceDto.getGameId()))
                     matchList.add(riotApiRequestService.getMatchByGameId(matchReferenceDto.getGameId()));
             }
-        }
-        catch(HttpClientErrorException.TooManyRequests e) {
-            throw e;
-        }
-        finally {
+        } finally {
             matchRepository.saveAll(matchList);
             log.info("Update Match count: {}", matchList.size());
         }
