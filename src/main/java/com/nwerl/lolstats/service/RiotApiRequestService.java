@@ -4,6 +4,7 @@ import com.nwerl.lolstats.web.domain.match.Match;
 import com.nwerl.lolstats.web.dto.MatchReferenceDto;
 import com.nwerl.lolstats.web.dto.MatchlistDto;
 import com.nwerl.lolstats.web.dto.SummonerDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,6 +18,7 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
 
+@Slf4j
 @Service
 public class RiotApiRequestService {
     private final String apiKey;
@@ -35,6 +37,7 @@ public class RiotApiRequestService {
 
     public SummonerDto getSummonerInfoByName(String name) {
         String url = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + apiKey;
+        log.info("Call RiotApi to Get SummonerInfo");
         return restTemplate.getForObject(url, SummonerDto.class);
     }
 
@@ -42,11 +45,13 @@ public class RiotApiRequestService {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"
                 + accountId
                 + "?api_key=" + apiKey;
+        log.info("Call RiotApi to Get MatchReferences");
         return restTemplate.getForObject(url, MatchlistDto.class).getMatches();
     }
 
     public Match getMatchByGameId(Long gameId) {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matches/" + gameId + "?api_key=" + apiKey;
+        log.info("Call RiotApi to Get Matches");
         return restTemplate.getForObject(url, Match.class);
     }
 }
