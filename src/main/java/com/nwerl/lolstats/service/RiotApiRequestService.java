@@ -1,9 +1,8 @@
 package com.nwerl.lolstats.service;
 
+import com.nwerl.lolstats.web.domain.match.FeaturedGameInfo;
 import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.dto.MatchReferenceDto;
-import com.nwerl.lolstats.web.dto.MatchlistDto;
-import com.nwerl.lolstats.web.dto.SummonerDto;
+import com.nwerl.lolstats.web.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,5 +51,11 @@ public class RiotApiRequestService {
     public Match getMatchByGameId(Long gameId) {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matches/" + gameId + "?api_key=" + apiKey;
         return restTemplate.getForObject(url, Match.class);
+    }
+
+    public List<FeaturedGameInfoDto> getFeaturedGameInfo() {
+        String url = "https://kr.api.riotgames.com/lol/spectator/v4/featured-games" + "?api_key=" + apiKey;
+        log.info("Call RiotApi to Get FeaturedGames");
+        return restTemplate.getForObject(url, FeaturedGamesDto.class).getGameList();
     }
 }
