@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.dto;
+package com.nwerl.lolstats.web.dto.riotApi.summoner;
 
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import lombok.Builder;
@@ -10,7 +10,6 @@ public class SummonerDto {
     private String accountId;
     private String puuid;
     private String name;
-
 
     private Long profileIconId;
     private Long revisionDate;
