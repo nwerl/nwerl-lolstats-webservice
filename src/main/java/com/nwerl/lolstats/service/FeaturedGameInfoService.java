@@ -1,8 +1,8 @@
 package com.nwerl.lolstats.service;
 
-import com.nwerl.lolstats.web.domain.match.FeaturedGameInfo;
-import com.nwerl.lolstats.web.domain.match.FeaturedGameInfoRepository;
-import com.nwerl.lolstats.web.dto.FeaturedGameInfoDto;
+import com.nwerl.lolstats.web.domain.featuredgame.FeaturedGameInfo;
+import com.nwerl.lolstats.web.domain.featuredgame.FeaturedGameInfoRepository;
+import com.nwerl.lolstats.web.dto.riotApi.featuredgame.FeaturedGameInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
