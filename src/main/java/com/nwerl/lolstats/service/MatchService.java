@@ -2,14 +2,14 @@ package com.nwerl.lolstats.service;
 
 
 import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.domain.match.MatchReference;
+import com.nwerl.lolstats.web.domain.match.MatchList;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.domain.match.MatchReferenceRepository;
-import com.nwerl.lolstats.web.dto.MatchReferenceDto;
+import com.nwerl.lolstats.web.domain.match.MatchListRepository;
+import com.nwerl.lolstats.web.dto.riotApi.match.MatchDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,33 +22,20 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final RiotApiRequestService riotApiRequestService;
     private final SummonerService summonerService;
-    private final MatchReferenceRepository matchReferenceRepository;
+    private final MatchListRepository matchListRepository;
 
-    public List<MatchReferenceDto> updateMatchReferenceByName(String name) {
+    public MatchReferenceDto getLastMatchReferenceByName(String name) {
         log.info("Update MatchReferences");
-        return matchReferenceRepository.saveAll(riotApiRequestService.getMatchReferencesByAccountId(summonerService.findByName(name).getAccountId()).stream()
-                    .map(MatchReferenceDto::toEntity)
-                    .collect(Collectors.toList())).stream()
-                                                .map(MatchReference::toDto)
-                                                .collect(Collectors.toList());
+        return riotApiRequestService.getLastMatchReference(name);
     }
 
-    public Boolean updateMatchByName(String name) {
+    public MatchDto updateMatchByName(String name) {
         log.info("Update Matches");
-        List<MatchReferenceDto> matchReferenceDtos = updateMatchReferenceByName(name);
-        List<Match> matchList = new ArrayList<>();
+        MatchReferenceDto matchReferenceDto = getLastMatchReferenceByName(name);
+        return riotApiRequestService.getMatchByGameId(matchReferenceDto.getGameId());
+    }
 
-        try {
-            for (int i = matchReferenceDtos.size(); i-- > 0; ) {
-                MatchReferenceDto matchReferenceDto = matchReferenceDtos.get(i);
-                if (!matchRepository.existsByGameId(matchReferenceDto.getGameId()))
-                    matchList.add(riotApiRequestService.getMatchByGameId(matchReferenceDto.getGameId()));
-            }
-        } finally {
-            matchRepository.saveAll(matchList);
-            log.info("Update Match count: {}", matchList.size());
-        }
-
-        return true;
+    public Boolean existsByGameId(Long gameId) {
+        return matchRepository.existsByGameId(gameId);
     }
 }
