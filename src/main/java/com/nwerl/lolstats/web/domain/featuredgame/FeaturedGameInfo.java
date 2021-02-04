@@ -1,13 +1,12 @@
-package com.nwerl.lolstats.web.domain.match;
+package com.nwerl.lolstats.web.domain.featuredgame;
 
-import com.nwerl.lolstats.web.dto.FeaturedGameInfoDto;
+import com.nwerl.lolstats.web.dto.riotApi.featuredgame.FeaturedGameInfoDto;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.Observer;
 import java.util.stream.Collectors;
 
 @Builder
