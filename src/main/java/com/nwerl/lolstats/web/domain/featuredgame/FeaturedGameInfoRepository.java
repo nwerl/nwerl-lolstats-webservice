@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.domain.match;
+package com.nwerl.lolstats.web.domain.featuredgame;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
