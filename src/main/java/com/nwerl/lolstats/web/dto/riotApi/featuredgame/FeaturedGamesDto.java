@@ -1,6 +1,5 @@
-package com.nwerl.lolstats.web.dto;
+package com.nwerl.lolstats.web.dto.riotApi.featuredgame;
 
-import com.nwerl.lolstats.web.domain.match.FeaturedGameInfo;
 import lombok.Data;
 
 import java.util.List;

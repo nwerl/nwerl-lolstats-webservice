@@ -1,6 +1,6 @@
-package com.nwerl.lolstats.web.dto;
+package com.nwerl.lolstats.web.dto.riotApi.featuredgame;
 
-import com.nwerl.lolstats.web.domain.match.FeaturedGameInfo;
+import com.nwerl.lolstats.web.domain.featuredgame.FeaturedGameInfo;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
