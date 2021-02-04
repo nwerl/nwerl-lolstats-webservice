@@ -1,7 +1,7 @@
 package com.nwerl.lolstats.service;
 
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
-import com.nwerl.lolstats.web.dto.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,4 +26,11 @@ public class SummonerService {
         return summonerDto;
     }
 
+    public String findAccountIdByName(String name) {
+        return summonerRepository.findByName(name).getAccountId();
+    }
+
+    public Boolean existsByName(String name) {
+        return summonerRepository.existsByName(name);
+    }
 }

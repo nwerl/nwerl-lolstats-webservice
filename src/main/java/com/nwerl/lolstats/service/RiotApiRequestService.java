@@ -1,8 +1,13 @@
 package com.nwerl.lolstats.service;
 
-import com.nwerl.lolstats.web.domain.match.FeaturedGameInfo;
-import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.dto.*;
+import com.nwerl.lolstats.web.dto.riotApi.featuredgame.FeaturedGameInfoDto;
+import com.nwerl.lolstats.web.dto.riotApi.featuredgame.FeaturedGamesDto;
+import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
+import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
+import com.nwerl.lolstats.web.dto.riotApi.match.MatchDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchListDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,22 +45,29 @@ public class RiotApiRequestService {
         return restTemplate.getForObject(url, SummonerDto.class);
     }
 
-    public List<MatchReferenceDto> getMatchReferencesByAccountId(String accountId) {
+    public MatchReferenceDto getLastMatchReference(String accountId) {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"
                 + accountId
-                + "?api_key=" + apiKey;
+                + "?endIndex=1"
+                + "&api_key=" + apiKey;
         log.info("Call RiotApi to Get MatchReferences");
-        return restTemplate.getForObject(url, MatchlistDto.class).getMatches();
+        return restTemplate.getForObject(url, MatchListDto.class).getMatches().get(0);
     }
 
-    public Match getMatchByGameId(Long gameId) {
+    public MatchDto getMatchByGameId(Long gameId) {
         String url = "https://kr.api.riotgames.com/lol/match/v4/matches/" + gameId + "?api_key=" + apiKey;
-        return restTemplate.getForObject(url, Match.class);
+        return restTemplate.getForObject(url, MatchDto.class);
     }
 
     public List<FeaturedGameInfoDto> getFeaturedGameInfo() {
         String url = "https://kr.api.riotgames.com/lol/spectator/v4/featured-games" + "?api_key=" + apiKey;
         log.info("Call RiotApi to Get FeaturedGames");
         return restTemplate.getForObject(url, FeaturedGamesDto.class).getGameList();
+    }
+
+    public List<LeagueItemDto> getChallengerLeagueItem() {
+        String url = "https://kr.api.riotgames.com/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5" + "?api_key=" + apiKey;
+        log.info("Call RiotApi to Get ChallengerLeagueItem");
+        return restTemplate.getForObject(url, LeagueListDto.class).getEntries();
     }
 }
