@@ -3,7 +3,7 @@ package com.nwerl.lolstats.service;
 
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
-import com.nwerl.lolstats.web.dto.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

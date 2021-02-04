@@ -2,8 +2,7 @@ package com.nwerl.lolstats.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.web.dto.SummonerDto;
-import org.junit.Before;
+import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

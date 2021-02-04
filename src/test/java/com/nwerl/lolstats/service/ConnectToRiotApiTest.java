@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.service;
 
-import com.nwerl.lolstats.web.dto.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

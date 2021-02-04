@@ -1,0 +1,18 @@
+package com.nwerl.lolstats.batch.summoner;
+
+import com.nwerl.lolstats.web.domain.summoner.Summoner;
+import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.context.annotation.Configuration;
+
+@Slf4j
+@StepScope
+@Configuration
+public class SummonerProcessor implements ItemProcessor<SummonerDto, Summoner> {
+    @Override
+    public Summoner process(SummonerDto item) throws Exception {
+        return item.toEntity();
+    }
+}
