@@ -3,11 +3,9 @@ package com.nwerl.lolstats.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nwerl.lolstats.config.ApiRequestConfig;
-import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
+import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,33 +27,35 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @RunWith(SpringRunner.class)
 @ImportAutoConfiguration(classes = {ApiRequestConfig.class})
-@RestClientTest(value = SummonerService.class)
-public class SummonerServiceTest {
+@RestClientTest(value = LeagueService.class)
+public class LeagueServiceTest {
     @Autowired
-    private SummonerService summonerService;
+    private LeagueService leagueService;
     @Autowired
     private MockRestServiceServer mockServer;
     @MockBean
-    private SummonerRepository summonerRepository;
+    private LeagueItemRepository leagueItemRepository;
     @Value("${apikey}")
     private String apiKey;
 
+
     @Test
-    public void getSummonerInfoByName_Test() throws JsonProcessingException {
+    public void getChallengerLeagueItem_Test() throws JsonProcessingException {
         //given
         String name = "Vehumet";
-        String uri  = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/"+name+"?api_key="+apiKey;
+        String uri  = "https://kr.api.riotgames.com/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key="+apiKey;
         ObjectMapper objectMapper = new ObjectMapper();
+        List<LeagueItemDto> list = new ArrayList<>();
+        list.add(LeagueItemDto.builder().summonerName("Vehumet").build());
 
-
-        String expectResult = objectMapper.writeValueAsString(SummonerDto.builder().name("Vehumet").build());
+        String expectResult = objectMapper.writeValueAsString(new LeagueListDto(list));
         mockServer.expect(requestTo(uri))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerService.getSummonerInfoByName(name);
+        LeagueListDto leagueListDto = leagueService.getChallengerLeagueItem();
 
         //then
-        assertThat(summonerDto.getName(), is(name));
+        assertThat(leagueListDto.getEntries().get(0).getSummonerName(), is(name));
     }
 }

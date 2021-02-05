@@ -3,11 +3,13 @@ package com.nwerl.lolstats.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nwerl.lolstats.config.ApiRequestConfig;
+import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
+import com.nwerl.lolstats.web.domain.match.Match;
+import com.nwerl.lolstats.web.domain.match.MatchList;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchListDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,33 +31,34 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @RunWith(SpringRunner.class)
 @ImportAutoConfiguration(classes = {ApiRequestConfig.class})
-@RestClientTest(value = SummonerService.class)
-public class SummonerServiceTest {
+@RestClientTest(value = MatchService.class)
+public class MatchServiceTest {
     @Autowired
-    private SummonerService summonerService;
+    private MatchService matchService;
     @Autowired
     private MockRestServiceServer mockServer;
     @MockBean
-    private SummonerRepository summonerRepository;
+    private MatchRepository matchRepository;
     @Value("${apikey}")
     private String apiKey;
 
     @Test
-    public void getSummonerInfoByName_Test() throws JsonProcessingException {
+    public void get_MatchReference_And_Match_Test() throws JsonProcessingException {
         //given
-        String name = "Vehumet";
-        String uri  = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/"+name+"?api_key="+apiKey;
+        String accountId = "thisis1234!";
+        Long gameId = 1234L;
+        String uri  = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"+accountId+"?api_key="+apiKey+"&endIndex=1";
+        List<MatchReferenceDto> list = new ArrayList<>();
+        list.add(MatchReferenceDto.builder().gameId(gameId).build());
         ObjectMapper objectMapper = new ObjectMapper();
 
-
-        String expectResult = objectMapper.writeValueAsString(SummonerDto.builder().name("Vehumet").build());
-        mockServer.expect(requestTo(uri))
-                .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
+        String expectResult = objectMapper.writeValueAsString(MatchListDto.builder().matches(list).build());
+        mockServer.expect(requestTo(uri)).andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerService.getSummonerInfoByName(name);
+        MatchReferenceDto matchReferenceDto = matchService.getLastMatchReference(accountId);
 
         //then
-        assertThat(summonerDto.getName(), is(name));
+        assertThat(matchReferenceDto.getGameId(), is(gameId));
     }
 }

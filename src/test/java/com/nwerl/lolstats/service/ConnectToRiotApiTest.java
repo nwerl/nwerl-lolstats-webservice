@@ -14,12 +14,12 @@ import static org.junit.Assert.assertThat;
 @SpringBootTest
 public class ConnectToRiotApiTest {
     @Autowired
-    private RiotApiRequestService riotApiRequestService;
+    private SummonerService summonerService;
 
     @Test
     public void connect_to_Riot_Api() {
         String name = "Vehumet";
-        SummonerDto summonerDto = riotApiRequestService.getSummonerInfoByName(name);
+        SummonerDto summonerDto = summonerService.getSummonerInfoByName(name);
         assertThat(name, is(summonerDto.getName()));
     }
 }
