@@ -25,8 +25,8 @@ public class RiotApiRequestController {
     private final LeagueService leagueService;
 
     @GetMapping("/api/v1/get/summonerinfo/{name}")
-    public SummonerDto getSummonerInfo(@PathVariable String name) {
-        return summonerService.findByName(name);
+    public String getSummonerInfo(@PathVariable String name) {
+        return summonerService.findAccountIdByName(name);
     }
 
     @GetMapping("/api/v1/get/matchlists/{name}")

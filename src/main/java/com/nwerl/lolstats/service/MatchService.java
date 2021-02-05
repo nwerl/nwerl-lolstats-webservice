@@ -1,41 +1,50 @@
 package com.nwerl.lolstats.service;
 
-
-import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.domain.match.MatchList;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.domain.match.MatchListRepository;
 import com.nwerl.lolstats.web.dto.riotApi.match.MatchDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchListDto;
 import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class MatchService {
     private final MatchRepository matchRepository;
-    private final RiotApiRequestService riotApiRequestService;
-    private final SummonerService summonerService;
-    private final MatchListRepository matchListRepository;
+    private final UriComponentsBuilder uriComponentsBuilder;
+    private final RestTemplate restTemplate;
 
     public MatchReferenceDto getLastMatchReferenceByName(String name) {
         log.info("Update MatchReferences");
-        return riotApiRequestService.getLastMatchReference(name);
+        return getLastMatchReference(name);
     }
 
     public MatchDto updateMatchByName(String name) {
         log.info("Update Matches");
         MatchReferenceDto matchReferenceDto = getLastMatchReferenceByName(name);
-        return riotApiRequestService.getMatchByGameId(matchReferenceDto.getGameId());
+        return getMatchByGameId(matchReferenceDto.getGameId());
     }
 
     public Boolean existsByGameId(Long gameId) {
         return matchRepository.existsByGameId(gameId);
+    }
+
+    public MatchReferenceDto getLastMatchReference(String accountId) {
+        log.info("Call RiotApi to Get MatchReferences");
+        String uri = uriComponentsBuilder
+                .path("/match/v4/matchlists/by-account/").path(accountId).queryParam("endIndex", "1")
+                .build().toString();
+        return restTemplate.getForObject(uri, MatchListDto.class).getMatches().get(0);
+    }
+
+    public MatchDto getMatchByGameId(Long gameId) {
+        String uri = uriComponentsBuilder
+                .path("/match/v4/matches/").path(String.valueOf(gameId))
+                .build().toString();
+        return restTemplate.getForObject(uri, MatchDto.class);
     }
 }
