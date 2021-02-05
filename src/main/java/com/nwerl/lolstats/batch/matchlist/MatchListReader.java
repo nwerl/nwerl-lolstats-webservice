@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.batch.matchlist;
 
-import com.nwerl.lolstats.service.RiotApiRequestService;
+import com.nwerl.lolstats.service.MatchService;
 import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @StepScope
 @Component
 public class MatchListReader implements ItemReader<MatchReferenceDto> {
-    private final RiotApiRequestService riotApiRequestService;
+    private final MatchService matchService;
 
     @Value("#{jobParameters[accountId]}")
     private String accountId;
@@ -25,7 +25,7 @@ public class MatchListReader implements ItemReader<MatchReferenceDto> {
         if(!flag){
             flag = true;
             log.info("accountId : {}", accountId);
-            return riotApiRequestService.getLastMatchReference(accountId);
+            return matchService.getLastMatchReference(accountId);
         }
         else {
             return null;

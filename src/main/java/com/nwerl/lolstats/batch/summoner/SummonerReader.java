@@ -1,7 +1,6 @@
 package com.nwerl.lolstats.batch.summoner;
 
 import com.nwerl.lolstats.service.LeagueService;
-import com.nwerl.lolstats.service.RiotApiRequestService;
 import com.nwerl.lolstats.service.SummonerService;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
@@ -20,14 +19,13 @@ import java.util.Queue;
 @StepScope
 @Configuration
 public class SummonerReader implements ItemReader<SummonerDto> {
-    private final RiotApiRequestService riotApiRequestService;
+    private final SummonerService summonerService;
     private Queue<String> notExistsSummonerQueue;
 
     @Autowired
-    public SummonerReader(RiotApiRequestService riotApiRequestService,
-                          LeagueService leagueService,
+    public SummonerReader(LeagueService leagueService,
                           SummonerService summonerService) {
-        this.riotApiRequestService = riotApiRequestService;
+        this.summonerService = summonerService;
         this.notExistsSummonerQueue = new LinkedList<>();
 
         List<LeagueItemDto> list = leagueService.findAll().getEntries();
@@ -42,6 +40,6 @@ public class SummonerReader implements ItemReader<SummonerDto> {
         if(notExistsSummonerQueue.isEmpty())
             return null;
         else
-            return riotApiRequestService.getSummonerInfoByName(notExistsSummonerQueue.poll());
+            return summonerService.getSummonerInfoByName(notExistsSummonerQueue.poll());
     }
 }
