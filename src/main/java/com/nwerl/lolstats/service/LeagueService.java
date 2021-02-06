@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @Service
 public class LeagueService {
     private final LeagueItemRepository leagueItemRepository;
-    private final UriComponentsBuilder uriComponentsBuilder;
     private final RestTemplate restTemplate;
 
     public LeagueListDto findAll() {
@@ -36,7 +35,7 @@ public class LeagueService {
 
     public LeagueListDto getChallengerLeagueItem() {
         log.info("Call RiotApi to Get ChallengerLeagueItem");
-        String uri = uriComponentsBuilder
+        String uri = UriComponentsBuilder.newInstance()
                 .path("/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5")
                 .build().toString();
 

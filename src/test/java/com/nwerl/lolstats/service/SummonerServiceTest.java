@@ -2,11 +2,8 @@ package com.nwerl.lolstats.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.config.ApiRequestConfig;
-import com.nwerl.lolstats.web.domain.match.MatchRepository;
+import com.nwerl.lolstats.config.RestTemplateConfig;
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,16 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
-@ImportAutoConfiguration(classes = {ApiRequestConfig.class})
+@ImportAutoConfiguration(classes = {RestTemplateConfig.class})
 @RestClientTest(value = SummonerService.class)
 public class SummonerServiceTest {
     @Autowired

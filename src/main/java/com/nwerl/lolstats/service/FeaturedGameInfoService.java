@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Service
 public class FeaturedGameInfoService {
     private final FeaturedGameInfoRepository featuredGameInfoRepository;
-    private final UriComponentsBuilder uriComponentsBuilder;
     private final RestTemplate restTemplate;
 
     public List<FeaturedGameInfoDto> updateFeaturedGames() {
@@ -33,7 +32,7 @@ public class FeaturedGameInfoService {
 
     public FeaturedGamesDto getFeaturedGameInfo() {
         log.info("Call RiotApi to Get FeaturedGames");
-        String uri = uriComponentsBuilder
+        String uri = UriComponentsBuilder.newInstance()
                 .path("/spectator/v4/featured-games")
                 .build().toString();
 

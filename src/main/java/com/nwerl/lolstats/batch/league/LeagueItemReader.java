@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.batch.league;
 
-import com.nwerl.lolstats.service.RiotApiRequestService;
+import com.nwerl.lolstats.service.LeagueService;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -15,12 +15,12 @@ import java.util.List;
 @StepScope
 @Configuration
 public class LeagueItemReader implements ItemReader<List<LeagueItemDto>> {
-    private final RiotApiRequestService riotApiRequestService;
+    private final LeagueService leagueService;
     private Boolean readFlag;
 
     @Autowired
-    public LeagueItemReader(RiotApiRequestService riotApiRequestService) {
-        this.riotApiRequestService = riotApiRequestService;
+    public LeagueItemReader(LeagueService leagueService) {
+        this.leagueService = leagueService;
         this.readFlag = false;
     }
 
@@ -32,7 +32,7 @@ public class LeagueItemReader implements ItemReader<List<LeagueItemDto>> {
         }
         else {
             readFlag = true;
-            return riotApiRequestService.getChallengerLeagueItem();
+            return leagueService.getChallengerLeagueItem().getEntries();
         }
     }
 }

@@ -2,7 +2,7 @@ package com.nwerl.lolstats.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.config.ApiRequestConfig;
+import com.nwerl.lolstats.config.RestTemplateConfig;
 import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
-@ImportAutoConfiguration(classes = {ApiRequestConfig.class})
+@ImportAutoConfiguration(classes = {RestTemplateConfig.class})
 @RestClientTest(value = LeagueService.class)
 public class LeagueServiceTest {
     @Autowired

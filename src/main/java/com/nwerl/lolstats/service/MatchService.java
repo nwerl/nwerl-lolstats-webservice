@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class MatchService {
     private final MatchRepository matchRepository;
-    private final UriComponentsBuilder uriComponentsBuilder;
     private final RestTemplate restTemplate;
 
     public MatchReferenceDto getLastMatchReferenceByName(String name) {
@@ -35,14 +34,14 @@ public class MatchService {
 
     public MatchReferenceDto getLastMatchReference(String accountId) {
         log.info("Call RiotApi to Get MatchReferences");
-        String uri = uriComponentsBuilder
+        String uri = UriComponentsBuilder.newInstance()
                 .path("/match/v4/matchlists/by-account/").path(accountId).queryParam("endIndex", "1")
                 .build().toString();
         return restTemplate.getForObject(uri, MatchListDto.class).getMatches().get(0);
     }
 
     public MatchDto getMatchByGameId(Long gameId) {
-        String uri = uriComponentsBuilder
+        String uri = UriComponentsBuilder.newInstance()
                 .path("/match/v4/matches/").path(String.valueOf(gameId))
                 .build().toString();
         return restTemplate.getForObject(uri, MatchDto.class);

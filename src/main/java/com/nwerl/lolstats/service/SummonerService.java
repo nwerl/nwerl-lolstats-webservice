@@ -13,7 +13,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class SummonerService {
     private final SummonerRepository summonerRepository;
-    private final UriComponentsBuilder uriComponentsBuilder;
     private final RestTemplate restTemplate;
 
     public String findAccountIdByName(String name) {
@@ -26,10 +25,9 @@ public class SummonerService {
 
     public SummonerDto getSummonerInfoByName(String name) {
         log.info("Call RiotApi to Get SummonerInfo");
-        String uri = uriComponentsBuilder.path("/summoner/v4/summoners/by-name/")
+        String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/by-name/")
                 .path(name)
                 .build().toString();
-
         return restTemplate.getForObject(uri, SummonerDto.class);
     }
 }
