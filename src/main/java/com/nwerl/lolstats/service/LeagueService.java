@@ -41,4 +41,8 @@ public class LeagueService {
 
         return restTemplate.getForObject(uri, LeagueListDto.class);
     }
+
+    public List<LeagueItemDto> getChallengerLeagueItem() {
+        return leagueItemRepository.findAllByOrderByLeaguePointsDesc().stream().map(LeagueItem::of).collect(Collectors.toList());
+    }
 }
