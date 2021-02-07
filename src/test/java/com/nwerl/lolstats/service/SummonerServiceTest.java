@@ -47,7 +47,7 @@ public class SummonerServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerService.getSummonerInfoByName(name);
+        SummonerDto summonerDto = summonerService.callApiSummonerInfoByName(name);
 
         //then
         assertThat(summonerDto.getName(), is(name));
