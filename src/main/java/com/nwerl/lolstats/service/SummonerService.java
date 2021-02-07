@@ -23,7 +23,7 @@ public class SummonerService {
         return summonerRepository.existsByName(name);
     }
 
-    public SummonerDto getSummonerInfoByName(String name) {
+    public SummonerDto callApiSummonerInfoByName(String name) {
         log.info("Call RiotApi to Get SummonerInfo");
         String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/by-name/")
                 .path(name)

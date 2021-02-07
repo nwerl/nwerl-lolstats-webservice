@@ -19,7 +19,7 @@ public class ConnectToRiotApiTest {
     @Test
     public void connect_to_Riot_Api() {
         String name = "Vehumet";
-        SummonerDto summonerDto = summonerService.getSummonerInfoByName(name);
+        SummonerDto summonerDto = summonerService.callApiSummonerInfoByName(name);
         assertThat(name, is(summonerDto.getName()));
     }
 }

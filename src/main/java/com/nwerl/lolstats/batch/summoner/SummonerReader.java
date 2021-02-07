@@ -40,6 +40,6 @@ public class SummonerReader implements ItemReader<SummonerDto> {
         if(notExistsSummonerQueue.isEmpty())
             return null;
         else
-            return summonerService.getSummonerInfoByName(notExistsSummonerQueue.poll());
+            return summonerService.callApiSummonerInfoByName(notExistsSummonerQueue.poll());
     }
 }
