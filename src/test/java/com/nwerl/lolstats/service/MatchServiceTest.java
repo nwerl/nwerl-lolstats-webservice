@@ -52,7 +52,7 @@ public class MatchServiceTest {
         mockServer.expect(requestTo(uri)).andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        MatchReferenceDto matchReferenceDto = matchService.getLastMatchReference(accountId);
+        MatchReferenceDto matchReferenceDto = matchService.callApiLastMatchReference(accountId);
 
         //then
         assertThat(matchReferenceDto.getGameId(), is(gameId));

@@ -19,7 +19,7 @@ public class MatchService {
 
     public MatchReferenceDto getLastMatchReferenceByName(String name) {
         log.info("Update MatchReferences");
-        return getLastMatchReference(name);
+        return callApiLastMatchReference(name);
     }
 
     public MatchDto updateMatchByName(String name) {
@@ -32,7 +32,7 @@ public class MatchService {
         return matchRepository.existsByGameId(gameId);
     }
 
-    public MatchReferenceDto getLastMatchReference(String accountId) {
+    public MatchReferenceDto callApiLastMatchReference(String accountId) {
         log.info("Call RiotApi to Get MatchReferences");
         String uri = UriComponentsBuilder.newInstance()
                 .path("/match/v4/matchlists/by-account/").path(accountId).queryParam("endIndex", "1")

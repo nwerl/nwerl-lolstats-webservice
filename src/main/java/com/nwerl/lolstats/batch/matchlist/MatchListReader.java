@@ -25,7 +25,7 @@ public class MatchListReader implements ItemReader<MatchReferenceDto> {
         if(!flag){
             flag = true;
             log.info("accountId : {}", accountId);
-            return matchService.getLastMatchReference(accountId);
+            return matchService.callApiLastMatchReference(accountId);
         }
         else {
             return null;
