@@ -32,7 +32,7 @@ public class LeagueItemReader implements ItemReader<List<LeagueItemDto>> {
         }
         else {
             readFlag = true;
-            return leagueService.getChallengerLeagueItem().getEntries();
+            return leagueService.callApiChallengerLeagueItem().getEntries();
         }
     }
 }

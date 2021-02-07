@@ -26,14 +26,14 @@ public class LeagueService {
 
     //ChallengerLeagueList를 갱신함.
     public LeagueListDto updateChallengerLeagueList() {
-        List<LeagueItemDto> list = getChallengerLeagueItem().getEntries();
+        List<LeagueItemDto> list = callApiChallengerLeagueItem().getEntries();
         leagueItemRepository.deleteAll(); //deleteAll 안하려면 N^2로 대조하여 받아온 list에서 없는 DB 데이터 삭제해야 함.
         leagueItemRepository.saveAll(list.stream().map(LeagueItemDto::toEntity).collect(Collectors.toList()));
 
         return new LeagueListDto(list);
     }
 
-    public LeagueListDto getChallengerLeagueItem() {
+    public LeagueListDto callApiChallengerLeagueItem() {
         log.info("Call RiotApi to Get ChallengerLeagueItem");
         String uri = UriComponentsBuilder.newInstance()
                 .path("/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5")

@@ -53,7 +53,7 @@ public class LeagueServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        LeagueListDto leagueListDto = leagueService.getChallengerLeagueItem();
+        LeagueListDto leagueListDto = leagueService.callApiChallengerLeagueItem();
 
         //then
         assertThat(leagueListDto.getEntries().get(0).getSummonerName(), is(name));
