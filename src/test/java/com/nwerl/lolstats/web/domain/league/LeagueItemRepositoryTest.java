@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +21,14 @@ public class LeagueItemRepositoryTest {
     private LeagueItemRepository leagueItemRepository;
 
     @Test
+    @Rollback(true)
     public void findAllOrderByLeaguePointsDesc_Test() {
         List<LeagueItem> list = new ArrayList<>();
         list.add(LeagueItem.builder().summonerId("123").leaguePoints(11111).build());
         list.add(LeagueItem.builder().summonerId("456").leaguePoints(99999).build());
         list.add(LeagueItem.builder().summonerId("789").leaguePoints(55555).build());
         list.add(LeagueItem.builder().summonerId("999").leaguePoints(99999).build());
+
         leagueItemRepository.saveAll(list);
 
         list = leagueItemRepository.findAllByOrderByLeaguePointsDesc();
@@ -35,5 +39,10 @@ public class LeagueItemRepositoryTest {
         assertThat(first.getSummonerId(), is("456"));
         assertThat(second.getSummonerId(), is("999"));
         assertThat(third.getSummonerId(), is("789"));
+
+        leagueItemRepository.deleteBySummonerId("123");
+        leagueItemRepository.deleteBySummonerId("456");
+        leagueItemRepository.deleteBySummonerId("789");
+        leagueItemRepository.deleteBySummonerId("999");
     }
 }
