@@ -25,7 +25,7 @@ public class MatchService {
     public MatchDto updateMatchByName(String name) {
         log.info("Update Matches");
         MatchReferenceDto matchReferenceDto = getLastMatchReferenceByName(name);
-        return getMatchByGameId(matchReferenceDto.getGameId());
+        return callApiMatchByGameId(matchReferenceDto.getGameId());
     }
 
     public Boolean existsByGameId(Long gameId) {
@@ -40,7 +40,7 @@ public class MatchService {
         return restTemplate.getForObject(uri, MatchListDto.class).getMatches().get(0);
     }
 
-    public MatchDto getMatchByGameId(Long gameId) {
+    public MatchDto callApiMatchByGameId(Long gameId) {
         String uri = UriComponentsBuilder.newInstance()
                 .path("/match/v4/matches/").path(String.valueOf(gameId))
                 .build().toString();

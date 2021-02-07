@@ -24,7 +24,7 @@ public class MatchReader implements ItemReader<MatchDto> {
     public MatchDto read() throws Exception {
         if(!flag){
             flag = true;
-            return matchService.getMatchByGameId(gameId);
+            return matchService.callApiMatchByGameId(gameId);
         }
         else {
             return null;
