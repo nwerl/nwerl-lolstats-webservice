@@ -1,18 +1,24 @@
 {{>layout/header}}
-    <h1>League of Legends 챌린저 TOP 50</h1>
+    <h1>League of Legends 챌린저 랭킹</h1>
     <div class="col-md-12">
         <table class="table table-horizontal table-bordered">
-            <thred class="thead-strong">
+            <thead class="thead-strong">
                 <tr>
                     <th>순위</th>
                     <th>소환사명</th>
+                    <th>점수</th>
                 </tr>
-            </thred>
+            </thead>
             <tbody id="tbody">
+                {{#leagueList}}
                 <tr>
-                    <td></td>
-                    <td></td>
+                    <a href="/summoner/{{summonerName}}">
+                    <td>{{rank}}</td>
+                    <td>{{summonerName}}</td>
+                    <td>{{leaguePoints}}</td>
+                    </a>
                 </tr>
+                {{/leagueList}}
             </tbody>
         </table>
     </div>

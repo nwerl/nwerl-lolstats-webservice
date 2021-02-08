@@ -1,0 +1,23 @@
+{{>layout/header}}
+<h1>소환사 대전 기록</h1>
+<div class="col-md-12">
+    <table class="table table-horizontal table-bordered">
+        <thead class="thead-strong">
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {{#matchList}}
+            <tr>
+                <td>{{}}</td>
+                <td>{{}}</td>
+                <td>{{}}</td>
+            </tr>
+        {{/matchList}}
+        </tbody>
+    </table>
+</div>
+{{>layout/footer}}
