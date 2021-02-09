@@ -4,12 +4,14 @@ import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
+import com.nwerl.lolstats.web.dto.riotApi.league.LeagueRankingDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,12 @@ public class LeagueService {
         return restTemplate.getForObject(uri, LeagueListDto.class);
     }
 
-    public List<LeagueItemDto> getChallengerLeagueItem() {
-        return leagueItemRepository.findAllByOrderByLeaguePointsDesc().stream().map(LeagueItem::of).collect(Collectors.toList());
+    public List<LeagueRankingDto> getLeagueRanking() {
+        int i = 1;
+        List<LeagueRankingDto> leagueRankingDtos = new ArrayList<>();
+        for(LeagueItem item : leagueItemRepository.findAllByOrderByLeaguePointsDesc()) {
+            leagueRankingDtos.add(new LeagueRankingDto(i++, item.getSummonerName(), item.getLeaguePoints()));
+        }
+        return leagueRankingDtos;
     }
 }
