@@ -52,4 +52,23 @@ public class SummonerServiceTest {
         //then
         assertThat(summonerDto.getName(), is(name));
     }
+
+    @Test
+    public void getSummonerInfoBySummonerId_Test() throws JsonProcessingException {
+        //given
+        String id = "O7PJD4sKhmJu1jDhvXmU9oPTNQHiBbGkXqPkM62KZ_VAkSbd-avo2Sxc";
+        String uri  = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/"+id+"?api_key="+apiKey;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+
+        String expectResult = objectMapper.writeValueAsString(SummonerDto.builder().id(id).build());
+        mockServer.expect(requestTo(uri))
+                .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        //when
+        SummonerDto summonerDto = summonerService.callApiSummonerInfoBySummonerId(id);
+
+        //then
+        assertThat(summonerDto.getId(), is(id));
+    }
 }
