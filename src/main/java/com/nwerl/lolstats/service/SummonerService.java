@@ -23,8 +23,20 @@ public class SummonerService {
         return summonerRepository.existsByName(name);
     }
 
+    public Boolean existsById(String id) {
+        return summonerRepository.existsByName(id);
+    }
+
+    public SummonerDto callApiSummonerInfoBySummonerId(String id) {
+        log.info("Call RiotApi to Get SummonerInfo : {}", id);
+        String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/")
+                .path(id)
+                .build().toString();
+        return restTemplate.getForObject(uri, SummonerDto.class);
+    }
+
     public SummonerDto callApiSummonerInfoByName(String name) {
-        log.info("Call RiotApi to Get SummonerInfo");
+        log.info("Call RiotApi to Get SummonerInfo : {}", name);
         String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/by-name/")
                 .path(name)
                 .build().toString();
