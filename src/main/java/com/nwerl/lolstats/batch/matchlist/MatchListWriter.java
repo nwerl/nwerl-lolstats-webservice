@@ -42,8 +42,9 @@ public class MatchListWriter implements ItemWriter<MatchReference> {
                     .build());
         }
         else {
-            MatchList matchList = matchListRepository.findByAccountId(accountId);
-            matchList.addMatchReferences((List<MatchReference>) items);
+            for(MatchReference item : items) {
+                matchListRepository.customMethod(accountId, item);
+            }
         }
     }
 }
