@@ -30,16 +30,19 @@ public class SummonerReader implements ItemReader<SummonerDto> {
 
         List<LeagueItemDto> list = leagueService.findAll().getEntries();
         for(LeagueItemDto item : list) {
-            if(!summonerService.existsByName(item.getSummonerName()))
-                notExistsSummonerQueue.add(item.getSummonerName());
+            if(!summonerService.existsById(item.getSummonerId()))
+                notExistsSummonerQueue.add(item.getSummonerId());
         }
+        log.info("notExistsSummonerQueue Size : {}", notExistsSummonerQueue.size());
     }
 
     @Override
     public SummonerDto read() throws Exception{
         if(notExistsSummonerQueue.isEmpty())
             return null;
-        else
-            return summonerService.callApiSummonerInfoByName(notExistsSummonerQueue.poll());
+        else {
+            Thread.sleep(1400);
+            return summonerService.callApiSummonerInfoBySummonerId(notExistsSummonerQueue.poll());
+        }
     }
 }
