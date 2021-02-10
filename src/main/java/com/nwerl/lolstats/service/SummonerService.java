@@ -19,12 +19,16 @@ public class SummonerService {
         return summonerRepository.findByName(name).getAccountId();
     }
 
+    public String findAccountIdById(String id) {
+        return summonerRepository.findById(id).get().getAccountId();
+    }
+
     public Boolean existsByName(String name) {
         return summonerRepository.existsByName(name);
     }
 
     public Boolean existsById(String id) {
-        return summonerRepository.existsByName(id);
+        return summonerRepository.existsById(id);
     }
 
     public SummonerDto callApiSummonerInfoBySummonerId(String id) {
