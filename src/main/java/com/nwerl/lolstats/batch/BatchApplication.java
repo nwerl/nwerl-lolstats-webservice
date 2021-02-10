@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,9 +25,7 @@ import java.util.Map;
 
 
 @Slf4j
-@EnableScheduling
-@EnableBatchProcessing
-@Configuration
+@Component
 public class BatchApplication {
     private final JobLauncher jobLauncher;
     private final Job matchJob;
@@ -49,15 +48,10 @@ public class BatchApplication {
         this.matchJob = matchJob;
         this.leagueJob = leagueJob;
         this.summonerService = summonerService;
-
-        leagueList = this.leagueService.findAll();
         accountIdMap = new HashMap<>();
-        for(LeagueItemDto item : leagueList.getEntries()) {
-            accountIdMap.put(item.getSummonerName(), summonerService.findAccountIdByName(item.getSummonerName()));
-        }
     }
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(fixedDelay = 3600000)
     public void leagueLaunch() throws Exception {
         log.info("Job Started at : {}", new Date());
         JobParameters param = new JobParametersBuilder()
@@ -67,12 +61,12 @@ public class BatchApplication {
 
         leagueList = this.leagueService.findAll();
         for(LeagueItemDto item : leagueList.getEntries()) {
-            accountIdMap.put(item.getSummonerName(), summonerService.findAccountIdByName(item.getSummonerName()));
+            accountIdMap.put(item.getSummonerName(), summonerService.findAccountIdById(item.getSummonerId()));
         }
     }
 
 
-    @Scheduled(cron = "*/3 * * * * *")
+    @Scheduled(fixedRateString = "3000", initialDelay = 5000)
     public void matchLaunch() throws Exception {
         log.info("Job Started at : {}", new Date());
 
