@@ -1,7 +1,7 @@
 package com.nwerl.lolstats.batch.match;
 
 import com.nwerl.lolstats.service.MatchService;
-import com.nwerl.lolstats.web.dto.riotApi.match.MatchDto;
+import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepExecution;
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @StepScope
 @Component
-public class MatchReader implements ItemReader<MatchDto> {
+public class MatchReader implements ItemReader<RiotMatchDto> {
     private final MatchService matchService;
     private Long gameId;
     private Boolean flag = false;
 
     @Override
-    public MatchDto read() throws Exception {
+    public RiotMatchDto read() throws Exception {
         if(!flag){
             flag = true;
             return matchService.callApiMatchByGameId(gameId);

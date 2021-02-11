@@ -6,8 +6,8 @@ import com.nwerl.lolstats.web.domain.match.Match;
 import com.nwerl.lolstats.web.domain.match.MatchReference;
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
-import com.nwerl.lolstats.web.dto.riotApi.match.MatchDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +32,12 @@ public class BatchConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    private final ItemReader<MatchReferenceDto> matchListReader;
-    private final ItemProcessor<MatchReferenceDto, MatchReference> matchListProcessor;
+    private final ItemReader<RiotMatchReferenceDto> matchListReader;
+    private final ItemProcessor<RiotMatchReferenceDto, MatchReference> matchListProcessor;
     private final ItemWriter<MatchReference> matchListWriter;
 
-    private final ItemReader<MatchDto> matchReader;
-    private final ItemProcessor<MatchDto, Match> matchProcessor;
+    private final ItemReader<RiotMatchDto> matchReader;
+    private final ItemProcessor<RiotMatchDto, Match> matchProcessor;
     private final ItemWriter<Match> matchWriter;
 
     private final ItemReader<List<LeagueItemDto>> leagueItemReader;
@@ -60,7 +60,7 @@ public class BatchConfiguration {
     @Bean
     public Step matchStep1() {
         return stepBuilderFactory.get("matchStep1")
-                .<MatchReferenceDto, MatchReference>chunk(1)
+                .<RiotMatchReferenceDto, MatchReference>chunk(1)
                 .reader(matchListReader)
                 .processor(matchListProcessor)
                 .writer(matchListWriter)
@@ -71,7 +71,7 @@ public class BatchConfiguration {
     @Bean
     public Step matchStep2() {
         return stepBuilderFactory.get("matchStep2")
-                .<MatchDto, Match>chunk(1)
+                .<RiotMatchDto, Match>chunk(1)
                 .reader(matchReader)
                 .processor(matchProcessor)
                 .writer(matchWriter)

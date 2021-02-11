@@ -2,7 +2,7 @@ package com.nwerl.lolstats.batch.matchlist;
 
 import com.nwerl.lolstats.service.MatchService;
 import com.nwerl.lolstats.web.domain.match.MatchReference;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @StepScope
 @Component
-public class MatchListProcessor implements ItemProcessor<MatchReferenceDto, MatchReference> {
+public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, MatchReference> {
     private final MatchService matchService;
     private StepExecution stepExecution;
 
     @Override
-    public MatchReference process(MatchReferenceDto item) throws Exception {
+    public MatchReference process(RiotMatchReferenceDto item) throws Exception {
         log.info("gameId : {}", item.getGameId());
 
         if(matchService.existsByGameId(item.getGameId())) {
