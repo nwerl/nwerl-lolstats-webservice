@@ -21,9 +21,9 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("/summoner/{summonerName}/matchList")
+    @GetMapping("/summoner/{summonerName}/matches")
     public String summonerMatchList(Model model, @PathVariable String summonerName) {
-        model.addAttribute("matchList", matchService);
-        return "index";
+        model.addAttribute("matches", matchService.getMatchesByName(summonerName));
+        return "summonerInfo";
     }
 }
