@@ -15,6 +15,10 @@ public class SummonerService {
     private final SummonerRepository summonerRepository;
     private final RestTemplate restTemplate;
 
+    public String findSummonerIdByName(String name) {
+        return summonerRepository.findByName(name).getId();
+    }
+
     public String findAccountIdByName(String name) {
         return summonerRepository.findByName(name).getAccountId();
     }
