@@ -1,5 +1,6 @@
 package com.nwerl.lolstats.web.domain.match;
 
+import com.nwerl.lolstats.web.dto.view.MatchListDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
@@ -19,8 +21,19 @@ public class MatchList {
 
     private List<MatchReference> matchReferences;
 
-
-    public void addMatchReferences(List<MatchReference> matchReferences) {
-        this.matchReferences.addAll(matchReferences);
+    public MatchListDto of() {
+        return MatchListDto.builder()
+                .accountId(accountId)
+                .summonerName(summonerName)
+                .matchReferences(
+                        this.matchReferences.stream()
+                        .map(matchReferences->
+                                MatchListDto.MatchReferenceDto.builder()
+                                .gameId(matchReferences.getGameId())
+                                .timeStamp(matchReferences.getTimeStamp())
+                                .build())
+                        .collect(Collectors.toList())
+                )
+                .build();
     }
 }
