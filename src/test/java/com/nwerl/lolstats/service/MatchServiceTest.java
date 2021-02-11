@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nwerl.lolstats.config.RestTemplateConfig;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchListDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchListDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +44,17 @@ public class MatchServiceTest {
         String accountId = "thisis1234!";
         Long gameId = 1234L;
         String uri  = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"+accountId+"?api_key="+apiKey+"&endIndex=1";
-        List<MatchReferenceDto> list = new ArrayList<>();
-        list.add(MatchReferenceDto.builder().gameId(gameId).build());
+        List<RiotMatchReferenceDto> list = new ArrayList<>();
+        list.add(RiotMatchReferenceDto.builder().gameId(gameId).build());
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String expectResult = objectMapper.writeValueAsString(MatchListDto.builder().matches(list).build());
+        String expectResult = objectMapper.writeValueAsString(RiotMatchListDto.builder().matches(list).build());
         mockServer.expect(requestTo(uri)).andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        MatchReferenceDto matchReferenceDto = matchService.callApiLastMatchReference(accountId);
+        RiotMatchReferenceDto riotMatchReferenceDto = matchService.callApiLastMatchReference(accountId);
 
         //then
-        assertThat(matchReferenceDto.getGameId(), is(gameId));
+        assertThat(riotMatchReferenceDto.getGameId(), is(gameId));
     }
 }

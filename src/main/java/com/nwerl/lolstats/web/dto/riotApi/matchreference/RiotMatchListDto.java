@@ -8,9 +8,9 @@ import java.util.List;
 
 @Builder
 @Data
-public class MatchListDto {
+public class RiotMatchListDto {
     private Integer startIndex;
     private Integer totalGames;
     private Integer endIndex;
-    private List<MatchReferenceDto> matches;
+    private List<RiotMatchReferenceDto> matches;
 }
