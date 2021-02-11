@@ -5,9 +5,8 @@ import com.nwerl.lolstats.service.LeagueService;
 import com.nwerl.lolstats.service.MatchService;
 import com.nwerl.lolstats.service.SummonerService;
 import com.nwerl.lolstats.web.dto.riotApi.featuredgame.FeaturedGameInfoDto;
-import com.nwerl.lolstats.web.dto.riotApi.match.MatchDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.MatchReferenceDto;
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,13 +29,13 @@ public class RiotApiRequestController {
     }
 
     @GetMapping("/api/v1/get/matchlists/{name}")
-    public MatchReferenceDto getLastMatchReference(@PathVariable String name) {
-        return matchService.getLastMatchReferenceByName(name);
+    public RiotMatchReferenceDto getLastMatchReference(@PathVariable String name) {
+        return matchService.callApiLastMatchReference(name);
     }
 
-    @GetMapping("/api/v1/get/matches/{name}")
-    public MatchDto getMatches(@PathVariable String name) {
-        return matchService.updateMatchByName(name);
+    @GetMapping("/api/v1/get/matches/{gameId}")
+    public RiotMatchDto getMatches(@PathVariable Long gameId) {
+        return matchService.callApiMatchByGameId(gameId);
     }
 
     @GetMapping("/api/v1/get/featured-games")
