@@ -1,5 +1,6 @@
 package com.nwerl.lolstats.web.domain.match;
 
+import com.nwerl.lolstats.web.dto.view.MatchDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
@@ -64,5 +66,47 @@ public class Match {
 
         private Long totalDamageDealtToChampions;
         private Integer goldEarned;
+
+        public MatchDto.PlayerDto of() {
+            return   MatchDto.PlayerDto.builder()
+                    .accountId(accountId)
+                    .spell1Id(spell1Id)
+                    .spell2Id(spell2Id)
+                    .summonerName(summonerName)
+                    .assists(assists)
+                    .championId(championId)
+                    .champLevel(champLevel)
+                    .deaths(deaths)
+                    .kills(kills)
+                    .goldEarned(goldEarned)
+                    .item0(item0)
+                    .item1(item1)
+                    .item2(item2)
+                    .item3(item3)
+                    .item4(item4)
+                    .item5(item5)
+                    .item6(item6)
+                    .perkPrimaryStyle(perkPrimaryStyle)
+                    .perkSubStyle(perkSubStyle)
+                    .teamId(teamId)
+                    .totalDamageDealtToChampions(totalDamageDealtToChampions)
+                    .totalMinionsKilled(totalMinionsKilled)
+                    .visionWardsBoughtInGame(visionWardsBoughtInGame)
+                    .win(win)
+                    .build();
+        }
+    }
+
+    public MatchDto of() {
+        return MatchDto.builder()
+                .gameCreation(gameCreation)
+                .gameDuration(gameDuration)
+                .gameId(gameId)
+                .gameMode(gameMode)
+                .gameType(gameType)
+                .mapId(mapId)
+                .seasonId(seasonId)
+                .players(players.stream().map(Player::of).collect(Collectors.toList()))
+                .build();
     }
 }
