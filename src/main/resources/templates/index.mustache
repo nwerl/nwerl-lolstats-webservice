@@ -12,11 +12,9 @@
             <tbody id="tbody">
                 {{#leagueList}}
                 <tr>
-                    <a href="/summoner/{{summonerName}}">
                     <td>{{rank}}</td>
-                    <td>{{summonerName}}</td>
+                    <td><a href="/summoner/{{summonerName}}/matches">{{summonerName}}</a></td>
                     <td>{{leaguePoints}}</td>
-                    </a>
                 </tr>
                 {{/leagueList}}
             </tbody>

@@ -4,19 +4,23 @@
     <table class="table table-horizontal table-bordered">
         <thead class="thead-strong">
         <tr>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>소환사</th>
+            <th>킬</th>
+            <th>데스</th>
+            <th>어시스트</th>
         </tr>
         </thead>
         <tbody id="tbody">
-        {{#matchList}}
+        {{#matches}}
+            {{#players}}
             <tr>
-                <td>{{}}</td>
-                <td>{{}}</td>
-                <td>{{}}</td>
+                <td>{{summonerName}}</td>
+                <td>{{kills}}</td>
+                <td>{{deaths}}</td>
+                <td>{{assists}}</td>
             </tr>
-        {{/matchList}}
+            {{/players}}
+        {{/matches}}
         </tbody>
     </table>
 </div>
