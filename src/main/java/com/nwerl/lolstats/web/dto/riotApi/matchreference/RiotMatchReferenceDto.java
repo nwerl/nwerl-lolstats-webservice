@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class MatchReferenceDto {
+public class RiotMatchReferenceDto {
     private Long gameId;
     private String role;
     private Integer season;

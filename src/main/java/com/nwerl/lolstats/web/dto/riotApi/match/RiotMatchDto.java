@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Builder
 @Data
-public class MatchDto {
+public class RiotMatchDto {
     @Id
     private Long gameId;
     private List<ParticipantIdentityDto> participantIdentities;
