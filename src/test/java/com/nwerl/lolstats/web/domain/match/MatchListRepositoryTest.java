@@ -28,9 +28,10 @@ public class MatchListRepositoryTest {
     private MatchListRepository matchListRepository;
 
     @Test
-    public void findBySummonerName_Test() {
-        String summonerName = "JUGKlNG";
-        System.out.println(matchListRepository.findBySummonerName(summonerName,0, 20).getMatchReferences().get(0).getGameId());
+    public void findBySummonerId_Test() {
+        //참새크면비둘기
+        String summonerId = "VtILZ-B2KsRVZeBsSSRpW2dGW3l8wMNY_Lk2G0TiIDqoNgdokyGQJFkp";
+        System.out.println(matchListRepository.findByAccountId(summonerId,0, 2).getMatchReferences().size());
     }
 
     @Test
