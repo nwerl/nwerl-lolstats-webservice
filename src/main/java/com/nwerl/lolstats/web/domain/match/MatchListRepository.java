@@ -11,7 +11,7 @@ public interface MatchListRepository extends MongoRepository<MatchList, String>,
     public MatchList findByAccountId(String Id);
     public Boolean existsByAccountId(String Id);
 
-    @Query(value = "{summonerName: ?0}", fields = "{matchReferences: {$slice: [?1, ?2]}}")
-    public MatchList findBySummonerName(String summonerName, int skip, int limit);
+    @Query(value = "{_id: ?0}", fields = "{matchReferences: {$slice: [?1, ?2]}}")
+    public MatchList findByAccountId(String id, int skip, int limit);
     public void customMethod(String accountId, MatchReference matchReference);
 }
