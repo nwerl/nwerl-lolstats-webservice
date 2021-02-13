@@ -4,7 +4,8 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Data
+@Getter
+@Setter
 @Document(collection="summoner")
 public class Summoner {
     private String id;
@@ -25,5 +26,10 @@ public class Summoner {
         this.name = name;
         this.profileIconId = profileIconId;
         this.revisionDate = revisionDate;
+        this.summonerLevel = summonerLevel;
+    }
+
+    public void modifyName(String name) {
+        this.name = name;
     }
 }

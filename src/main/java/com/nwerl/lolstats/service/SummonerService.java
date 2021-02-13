@@ -1,5 +1,6 @@
 package com.nwerl.lolstats.service;
 
+import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,20 @@ public class SummonerService {
         return summonerRepository.findById(id).get().getAccountId();
     }
 
-    public Boolean existsByName(String name) {
-        return summonerRepository.existsByName(name);
-    }
+    public Boolean checkByName(String name, String summonerId) {
+        if(!summonerRepository.existsById(summonerId)) {
+            return false;
+        }
+        else {
+            Summoner summoner = summonerRepository.findById(summonerId).get();
+            if (!summoner.getName().equals(name)) {
+                //닉네임 변경 시
+                summoner.modifyName(name);
+                summonerRepository.save(summoner);
+            }
 
-    public Boolean existsById(String id) {
-        return summonerRepository.existsById(id);
+            return true;
+        }
     }
 
     public SummonerDto callApiSummonerInfoBySummonerId(String id) {
