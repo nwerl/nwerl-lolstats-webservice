@@ -24,7 +24,7 @@ public class MatchDto {
     private Long gameDuration;
     private Long gameCreation;
 
-
+    private PlayerDto player;
     private List<PlayerDto> players;
 
     @Builder
