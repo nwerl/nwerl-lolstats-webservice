@@ -47,11 +47,12 @@ public class MatchService {
     public MatchListDto getMatchListByName(String name) {
         String Id = summonerService.findAccountIdByName(name);
 
-        return matchListRepository.findByAccountId(Id, 0, 2).of();
+        return matchListRepository.findByAccountId(Id, 0, 20).of();
     }
 
-    public MatchDto getMatchById(Long id) {
-        return matchRepository.findById(id).get().of();
+    public MatchDto getMatchById(String name, Long id) {
+        String accountId = summonerService.findAccountIdByName(name);
+        return matchRepository.findById(id).get().of(accountId);
     }
 
     public List<MatchDto> getMatchesByName(String name) {
@@ -59,7 +60,7 @@ public class MatchService {
 
         List<MatchDto> list = new ArrayList<>();
         for(MatchListDto.MatchReferenceDto item : matchReferences) {
-            list.add(getMatchById(item.getGameId()));
+            list.add(getMatchById(name, item.getGameId()));
         }
 
         return list;

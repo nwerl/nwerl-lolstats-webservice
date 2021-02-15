@@ -68,7 +68,7 @@ public class Match {
         private Integer goldEarned;
 
         public MatchDto.PlayerDto of() {
-            return   MatchDto.PlayerDto.builder()
+            return  MatchDto.PlayerDto.builder()
                     .accountId(accountId)
                     .spell1Id(spell1Id)
                     .spell2Id(spell2Id)
@@ -97,7 +97,8 @@ public class Match {
         }
     }
 
-    public MatchDto of() {
+    public MatchDto of(String accountId) {
+        Player owner = this.players.stream().filter(p -> p.accountId.equals(accountId)).findFirst().get();
         return MatchDto.builder()
                 .gameCreation(gameCreation)
                 .gameDuration(gameDuration)
@@ -106,6 +107,7 @@ public class Match {
                 .gameType(gameType)
                 .mapId(mapId)
                 .seasonId(seasonId)
+                .owner(owner.of())
                 .players(players.stream().map(Player::of).collect(Collectors.toList()))
                 .build();
     }
