@@ -1,7 +1,6 @@
 package com.nwerl.lolstats.web.dto.riotApi.ddragon;
 
 import com.nwerl.lolstats.web.domain.champion.Champion;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Data
-public class RiotChampionsDto {
+public class RiotChampionListDto {
     private Map<String, RiotChampionDto> data;
 
     @NoArgsConstructor
