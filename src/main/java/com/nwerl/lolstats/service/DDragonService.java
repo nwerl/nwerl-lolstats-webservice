@@ -1,109 +1,31 @@
 package com.nwerl.lolstats.service;
 
-import com.nwerl.lolstats.web.domain.champion.ChampionRepository;
-import com.nwerl.lolstats.web.dto.riotApi.ddragon.RiotChampionListDto;
-import com.nwerl.lolstats.web.dto.riotApi.ddragon.RiotItemListDto;
-import com.nwerl.lolstats.web.dto.riotApi.ddragon.RiotSpellListDto;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class DDragonService {
-    private final RestTemplate restTemplate;
-    private String version;
+    private final DDragonApiCaller dDragonApiCaller;
     private String basePath;
+    private ObjectMapper mapper;
 
-    public DDragonService (RestTemplateBuilder restTemplateBuilder) {
-        restTemplate = restTemplateBuilder.requestFactory(()->new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
-                .setConnectTimeout(Duration.ofMillis(20000))
-                .setReadTimeout(Duration.ofMillis(20000))
-                .additionalMessageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")))
-                .build();
-
-        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory
-                (UriComponentsBuilder.newInstance()
-                        .scheme("https").host("ddragon.leagueoflegends.com")));
-
+    public DDragonService (DDragonApiCaller dDragonApiCaller) {
+        this.mapper = new ObjectMapper();
+        this.dDragonApiCaller = dDragonApiCaller;
         basePath = "/home/nwerl/IdeaProjects/nwerl-lolstats-webservice/src/main/resources/static/images";
-    }
-
-    @PostConstruct
-    public String callApiCurrentLOLVersion() {
-        String uri =  UriComponentsBuilder.newInstance()
-                    .path("/api").path("/versions.json")
-                    .build().toString();
-
-        version = (String) (restTemplate.getForObject(uri, List.class).get(0));
-
-        return version;
-    }
-
-    public RiotChampionListDto callApiChampionList() {
-        String uri = UriComponentsBuilder.newInstance()
-                    .path("/cdn").path("/"+version).path("/data").path("/ko_KR").path("/champion.json")
-                    .build().toString();
-
-        return restTemplate.getForObject(uri, RiotChampionListDto.class);
-    }
-
-    public byte[] callApiChampionImage(String championName) {
-        String uri = UriComponentsBuilder.newInstance()
-                    .path("/cdn").path("/"+version).path("/img/champion").path("/"+championName+".png")
-                    .build().toString();
-
-        return restTemplate.getForObject(uri, byte[].class);
-    }
-
-    public RiotItemListDto callApiItemList() {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/data/ko_KR").path("/item.json")
-                .build().toString();
-
-        return restTemplate.getForObject(uri, RiotItemListDto.class);
-    }
-
-    public byte[] callApiItemImage(String itemId) {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/img/item").path("/"+itemId+".png")
-                .build().toString();
-
-        return restTemplate.getForObject(uri, byte[].class);
-    }
-
-    public RiotSpellListDto callApiSpellList() {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/data/ko_KR").path("/summoner.json")
-                .build().toString();
-
-        return restTemplate.getForObject(uri, RiotSpellListDto.class);
-    }
-
-    public byte[] callApiSpellImage(String spellId) {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/img/spell").path("/"+spellId+".png")
-                .build().toString();
-
-        return restTemplate.getForObject(uri, byte[].class);
     }
 
     //@EventListener(ApplicationReadyEvent.class)
@@ -111,14 +33,17 @@ public class DDragonService {
         log.info("Update Champions started");
 
         String assetName = "champion";
-        Map<String, Long> champions = callApiChampionList().getData().values().stream()
-                .collect(Collectors.toMap(RiotChampionListDto.RiotChampionDto::getId, RiotChampionListDto.RiotChampionDto::getKey));
+        String folderName = "champions";
+        Map<String, JsonNode> champions = mapper.convertValue(dDragonApiCaller.callListApi(assetName).get("data"),
+                                                            new TypeReference<Map<String, JsonNode>>(){});
 
-        for(Map.Entry<String, Long> champion : champions.entrySet()) {
-            Path path = Paths.get(basePath+champion.getValue()+".png");
+        for(Map.Entry<String, JsonNode> champion : champions.entrySet()) {
+            String championId = champion.getValue().get("key").asText();
+
+            Path path = Paths.get(basePath+"/"+folderName+"/"+championId+".png");
             if(Files.exists(path))  continue;
 
-            byte[] imageBytes = callApiChampionImage(champion.getKey());
+            byte[] imageBytes = dDragonApiCaller.callImgApi(assetName, champion.getKey());
             Files.write(path, imageBytes);
         }
         log.info("Update Champions finished");
@@ -127,33 +52,95 @@ public class DDragonService {
     public void updateItems() throws IOException {
         log.info("Update Items started");
 
-        String basePath = "/home/nwerl/IdeaProjects/nwerl-lolstats-webservice/src/main/resources/static/images/items/";
-        Set<String> itemList = callApiItemList().getData().keySet();
+        String assetName = "item";
+        String folderName = "items";
+        List<String> items = mapper.convertValue(dDragonApiCaller.callListApi(assetName).get("data").fieldNames(),
+                new TypeReference<List<String>>(){});
 
-        for(String itemId : itemList) {
-            Path path = Paths.get(basePath+itemId+".png");
+        for(String itemId : items) {
+            Path path = Paths.get(basePath+"/"+folderName+"/"+itemId+".png");
             if(Files.exists(path))  continue;
 
-            byte[] imgBytes = callApiItemImage(itemId);
+            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, itemId);
             Files.write(path, imgBytes);
         }
-
         log.info("Update Items finished");
     }
 
     public void updateSpells() throws IOException {
-        log.info("Update Items started");
+        log.info("Update Spells started");
 
-        String basePath = "/home/nwerl/IdeaProjects/nwerl-lolstats-webservice/src/main/resources/static/images/spells/";
-        Set<String> spellList = callApiSpellList().getData().keySet();
+        String jsonName = "summoner", assetName = "spell";
+        String folderName = "spells";
 
-        for(String spellId : spellList) {
-            Path path = Paths.get(basePath+spellId+".png");
+        Map<String, String> spells = new HashMap<>();
+
+        JsonNode jsonNode = dDragonApiCaller.callListApi(jsonName).get("data");
+        Iterator<String> it = jsonNode.fieldNames();
+
+        while(it.hasNext()){
+            String spellName = it.next();
+            String spellId = jsonNode.get(spellName).get("key").asText();
+            spells.put(spellId, spellName);
+        }
+
+        for(Map.Entry<String, String> spell : spells.entrySet()) {
+            Path path = Paths.get(basePath+"/"+folderName+"/"+spell.getKey()+".png");
             if(Files.exists(path))  continue;
 
-            byte[] imgBytes = callApiSpellImage(spellId);
+            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, spell.getValue());
             Files.write(path, imgBytes);
         }
+
+        log.info("Update Spells finished");
+    }
+
+    //todo : match 컬렉션에 perk 잘못 들어감, perk 이미지는 URI 경로가 약간 다름.... 스킵할지 말지 고민하자.
+    public void updateRunes() throws IOException {
+        log.info("Update Items started");
+
+        String jsonName = "runesReforged";
+        String assetName = "perk-images/Styles";
+        String folderName1 = "runeStyles", folderName2 = "runes";
+        List<JsonNode> mappedList = mapper.convertValue(dDragonApiCaller.callListApi(jsonName),
+                new TypeReference<List<JsonNode>>(){});
+
+        List<String> runeStyles = new ArrayList<>();
+        for(JsonNode node : mappedList) {
+            String icon = node.get("icon").asText();
+            runeStyles.add(icon.substring(icon.lastIndexOf("/")+1, icon.lastIndexOf(".")));
+        }
+
+        for(String runeStyle : runeStyles)
+            log.info("{}", runeStyle);
+
+        for(String runeStyle : runeStyles) {
+            Path path = Paths.get(basePath+"/"+folderName1+"/"+runeStyle.substring(0, runeStyle.indexOf("_"))+".png");
+            if(Files.exists(path))  continue;
+
+            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, runeStyle);
+            Files.write(path, imgBytes);
+        }
+
+//        Map<String, String> runes = new HashMap<>();
+//        for(JsonNode node : mappedList) {
+//            List<JsonNode> slotsList = node.findValues("slots");
+//            log.info("{}",slotsList.size());
+//            for(JsonNode slot : slotsList) {
+//                runes.putAll(slot.findValues("runes").stream()
+//                        .collect(Collectors.toMap(n -> n.get("id").asText(), n -> n.get("icon").asText())));
+//            }
+//        }
+//
+//        for(Map.Entry<String, String> rune : runes.entrySet()) {
+//            Path path = Paths.get(basePath+"/"+folderName2+"/"+rune.getKey()+".png");
+//            if(Files.exists(path))  continue;
+//
+//            String icon = rune.getValue();
+//            byte[] imgBytes = dDragonApiCaller.callImgApi(icon.substring(0, icon.lastIndexOf("/")), icon.substring(icon.lastIndexOf("/")+1));
+//            Files.write(path, imgBytes);
+//        }
+
 
         log.info("Update Items finished");
     }
