@@ -1,8 +1,6 @@
-package com.nwerl.lolstats.service;
+package com.nwerl.lolstats.service.dDragon;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sun.jndi.toolkit.url.Uri;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -19,11 +17,11 @@ import java.util.List;
 
 
 @Component
-public class DDragonApiCaller {
+public class DDragonApiRestCaller implements DDragonApiCaller {
     private final RestTemplate restTemplate;
     private String version;
 
-    public DDragonApiCaller (RestTemplateBuilder restTemplateBuilder) {
+    public DDragonApiRestCaller(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder.requestFactory(()->new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
                 .setConnectTimeout(Duration.ofMillis(20000))
                 .setReadTimeout(Duration.ofMillis(20000))
@@ -36,7 +34,7 @@ public class DDragonApiCaller {
     }
 
     @PostConstruct
-    private String callApiCurrentLOLVersion() {
+    public String callApiCurrentLOLVersion() {
         String uri =  UriComponentsBuilder.newInstance()
                 .path("/api").path("/versions.json")
                 .build().toString();

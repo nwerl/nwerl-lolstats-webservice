@@ -1,19 +1,19 @@
-package com.nwerl.lolstats.service;
+package com.nwerl.lolstats.service.dDragon;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -22,6 +22,7 @@ public class DDragonService {
     private String basePath;
     private ObjectMapper mapper;
 
+    @Autowired
     public DDragonService (DDragonApiCaller dDragonApiCaller) {
         this.mapper = new ObjectMapper();
         this.dDragonApiCaller = dDragonApiCaller;
@@ -95,9 +96,8 @@ public class DDragonService {
         log.info("Update Spells finished");
     }
 
-    //todo : match 컬렉션에 perk 잘못 들어감, perk 이미지는 URI 경로가 약간 다름.... 스킵할지 말지 고민하자.
     public void updateRunes() throws IOException {
-        log.info("Update Items started");
+        log.info("Update Runes started");
 
         String jsonName = "runesReforged";
         String assetName = "perk-images/Styles";
@@ -105,43 +105,45 @@ public class DDragonService {
         List<JsonNode> mappedList = mapper.convertValue(dDragonApiCaller.callListApi(jsonName),
                 new TypeReference<List<JsonNode>>(){});
 
-        List<String> runeStyles = new ArrayList<>();
+        Map<String, String> runeStyles = new HashMap<>();
         for(JsonNode node : mappedList) {
+            String runeId = node.get("id").asText();
             String icon = node.get("icon").asText();
-            runeStyles.add(icon.substring(icon.lastIndexOf("/")+1, icon.lastIndexOf(".")));
+            runeStyles.put(runeId, icon.substring(icon.lastIndexOf("/")+1, icon.lastIndexOf(".")));
         }
 
-        for(String runeStyle : runeStyles)
-            log.info("{}", runeStyle);
-
-        for(String runeStyle : runeStyles) {
-            Path path = Paths.get(basePath+"/"+folderName1+"/"+runeStyle.substring(0, runeStyle.indexOf("_"))+".png");
+        for(Map.Entry<String, String> runeStyle : runeStyles.entrySet()) {
+            Path path = Paths.get(basePath+"/"+folderName1+"/"+runeStyle.getKey()+".png");
             if(Files.exists(path))  continue;
 
-            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, runeStyle);
+            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, runeStyle.getValue());
             Files.write(path, imgBytes);
         }
 
-//        Map<String, String> runes = new HashMap<>();
-//        for(JsonNode node : mappedList) {
-//            List<JsonNode> slotsList = node.findValues("slots");
-//            log.info("{}",slotsList.size());
-//            for(JsonNode slot : slotsList) {
-//                runes.putAll(slot.findValues("runes").stream()
-//                        .collect(Collectors.toMap(n -> n.get("id").asText(), n -> n.get("icon").asText())));
-//            }
-//        }
-//
-//        for(Map.Entry<String, String> rune : runes.entrySet()) {
-//            Path path = Paths.get(basePath+"/"+folderName2+"/"+rune.getKey()+".png");
-//            if(Files.exists(path))  continue;
-//
-//            String icon = rune.getValue();
-//            byte[] imgBytes = dDragonApiCaller.callImgApi(icon.substring(0, icon.lastIndexOf("/")), icon.substring(icon.lastIndexOf("/")+1));
-//            Files.write(path, imgBytes);
-//        }
+        Map<String, String> runes = new HashMap<>();
+        for(JsonNode node : mappedList) {
+            List<JsonNode> slotsList = StreamSupport.stream(node.get("slots").spliterator(), false)
+                    .collect(Collectors.toList());
+            for(JsonNode slot : slotsList) {
+                List<JsonNode> runesList = StreamSupport.stream(slot.get("runes").spliterator(), false)
+                        .collect(Collectors.toList());
+
+                runes.putAll(runesList.stream()
+                        .collect(Collectors.toMap(n -> n.get("id").asText(), n -> n.get("icon").asText())));
+            }
+        }
+
+        for(Map.Entry<String, String> rune : runes.entrySet()) {
+            Path path = Paths.get(basePath+"/"+folderName2+"/"+rune.getKey()+".png");
+            if(Files.exists(path))  continue;
+
+            String icon = rune.getValue();
+            byte[] imgBytes = dDragonApiCaller.callImgApi(icon.substring(0, icon.lastIndexOf("/")),
+                    icon.substring(icon.lastIndexOf("/")+1, icon.lastIndexOf(".")));
+            Files.write(path, imgBytes);
+        }
 
 
-        log.info("Update Items finished");
+        log.info("Update Runes finished");
     }
 }
