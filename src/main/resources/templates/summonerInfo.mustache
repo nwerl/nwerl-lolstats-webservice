@@ -1,27 +1,27 @@
 {{>layout/header}}
 <h1>소환사 대전 기록</h1>
-<div class="col-md-12">
-    <table class="table table-horizontal table-bordered">
-        <thead class="thead-strong">
-        <tr>
-            <th>소환사</th>
-            <th>킬</th>
-            <th>데스</th>
-            <th>어시스트</th>
-        </tr>
-        </thead>
-        <tbody id="tbody">
-        {{#matches}}
-            {{#players}}
-            <tr>
-                <td>{{summonerName}}</td>
-                <td>{{kills}}</td>
-                <td>{{deaths}}</td>
-                <td>{{assists}}</td>
-            </tr>
-            {{/players}}
-        {{/matches}}
-        </tbody>
-    </table>
+<div class="container">
+    {{#matches}}
+    <div class="row bg-primary mt-2 pt-5">
+            <div class="col-md-12">
+                {{#owner}}
+                    {{gameMode}}
+                    {{win}}
+                    <img src="/images/champions/{{championId}}.png"/>
+                    <img src="/images/spells/{{spell1Id}}.png"/>
+                    <img src="/images/spells/{{spell2Id}}.png"/>
+                    <img src="/images/items/{{item0}}.png"/>
+                    <img src="/images/items/{{item1}}.png"/>
+                    <img src="/images/items/{{item2}}.png"/>
+                    <img src="/images/items/{{item3}}.png"/>
+                    <img src="/images/items/{{item4}}.png"/>
+                    <img src="/images/items/{{item5}}.png"/>
+                    {{perkPrimaryStyle}}
+                    {{perkSubStyle}}
+                    {{kills}} / {{deaths}} / {{assists}}
+                {{/owner}}
+            </div>
+    </div>
+    {{/matches}}
 </div>
 {{>layout/footer}}
