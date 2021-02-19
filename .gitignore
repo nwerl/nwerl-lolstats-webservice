@@ -4,3 +4,4 @@
 build
 application-apikey.properties
 application-mongodb.properties
+application-api-hostname.properties
