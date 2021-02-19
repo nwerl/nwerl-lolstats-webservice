@@ -19,7 +19,9 @@ import java.time.Duration;
 public class RestTemplateConfig {
     @Bean
     public RestTemplate restConfig(RestTemplateBuilder restTemplateBuilder,
-                                           @Value("${apikey}") String apiKey) {
+                                   @Value("${apikey}") String apiKey,
+                                   @Value("${riotgames_protocol}") String scheme,
+                                   @Value("${riotgames_hostname}") String hostname) {
         RestTemplate restTemplate = restTemplateBuilder.requestFactory(()->new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
                 .setConnectTimeout(Duration.ofMillis(20000))
                 .setReadTimeout(Duration.ofMillis(20000))
@@ -28,7 +30,8 @@ public class RestTemplateConfig {
 
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory
                 (UriComponentsBuilder.newInstance()
-                .scheme("https").host("kr.api.riotgames.com").path("lol").queryParam("api_key", apiKey)));
+                .scheme(scheme).host(hostname).path("lol").queryParam("api_key", apiKey)));
+
         return restTemplate;
     }
 }

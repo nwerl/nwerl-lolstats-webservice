@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.service.dDragon;
+package com.nwerl.lolstats.service.datadragon;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,15 +17,15 @@ import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
-public class DDragonService {
-    private final DDragonApiCaller dDragonApiCaller;
-    private String basePath;
+public class DataDragonService {
+    private final DataDragonApiCaller dataDragonApiCaller;
+    private final String basePath;
     private ObjectMapper mapper;
 
     @Autowired
-    public DDragonService (DDragonApiCaller dDragonApiCaller) {
+    public DataDragonService(DataDragonApiCaller dataDragonApiCaller) {
         this.mapper = new ObjectMapper();
-        this.dDragonApiCaller = dDragonApiCaller;
+        this.dataDragonApiCaller = dataDragonApiCaller;
         basePath = "/home/nwerl/IdeaProjects/nwerl-lolstats-webservice/src/main/resources/static/images";
     }
 
@@ -33,50 +33,57 @@ public class DDragonService {
     public void updateChampions() throws IOException {
         log.info("Update Champions started");
 
-        String assetName = "champion";
+        String jsonName = "champion";
         String folderName = "champions";
-        Map<String, JsonNode> champions = mapper.convertValue(dDragonApiCaller.callListApi(assetName).get("data"),
+        String apiPath = "/champion";
+
+        Map<String, JsonNode> champions = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName).get("data"),
                                                             new TypeReference<Map<String, JsonNode>>(){});
 
         for(Map.Entry<String, JsonNode> champion : champions.entrySet()) {
             String championId = champion.getValue().get("key").asText();
 
-            Path path = Paths.get(basePath+"/"+folderName+"/"+championId+".png");
-            if(Files.exists(path))  continue;
+            Path filePath = Paths.get(basePath+"/"+folderName+"/"+championId+".png");
+            if(Files.exists(filePath))  continue;
 
-            byte[] imageBytes = dDragonApiCaller.callImgApi(assetName, champion.getKey());
-            Files.write(path, imageBytes);
+            byte[] imageBytes = dataDragonApiCaller.callImgApi(apiPath, champion.getKey());
+            Files.write(filePath, imageBytes);
         }
+
         log.info("Update Champions finished");
     }
 
     public void updateItems() throws IOException {
         log.info("Update Items started");
 
-        String assetName = "item";
+        String jsonName = "item";
         String folderName = "items";
-        List<String> items = mapper.convertValue(dDragonApiCaller.callListApi(assetName).get("data").fieldNames(),
+        String apiPath = "/item";
+
+        List<String> items = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName).get("data").fieldNames(),
                 new TypeReference<List<String>>(){});
 
         for(String itemId : items) {
-            Path path = Paths.get(basePath+"/"+folderName+"/"+itemId+".png");
-            if(Files.exists(path))  continue;
+            Path filePath = Paths.get(basePath+"/"+folderName+"/"+itemId+".png");
+            if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, itemId);
-            Files.write(path, imgBytes);
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, itemId);
+            Files.write(filePath, imgBytes);
         }
+
         log.info("Update Items finished");
     }
 
     public void updateSpells() throws IOException {
         log.info("Update Spells started");
 
-        String jsonName = "summoner", assetName = "spell";
+        String jsonName = "summoner";
         String folderName = "spells";
+        String apiPath = "/spell";
 
         Map<String, String> spells = new HashMap<>();
 
-        JsonNode jsonNode = dDragonApiCaller.callListApi(jsonName).get("data");
+        JsonNode jsonNode = dataDragonApiCaller.callListApi(jsonName).get("data");
         Iterator<String> it = jsonNode.fieldNames();
 
         while(it.hasNext()){
@@ -86,23 +93,23 @@ public class DDragonService {
         }
 
         for(Map.Entry<String, String> spell : spells.entrySet()) {
-            Path path = Paths.get(basePath+"/"+folderName+"/"+spell.getKey()+".png");
-            if(Files.exists(path))  continue;
+            Path filePath = Paths.get(basePath+"/"+folderName+"/"+spell.getKey()+".png");
+            if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, spell.getValue());
-            Files.write(path, imgBytes);
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, spell.getValue());
+            Files.write(filePath, imgBytes);
         }
 
         log.info("Update Spells finished");
     }
 
-    public void updateRunes() throws IOException {
-        log.info("Update Runes started");
+    public void updateRuneStyles() throws IOException {
+        log.info("Update RuneStyles started");
 
         String jsonName = "runesReforged";
-        String assetName = "perk-images/Styles";
-        String folderName1 = "runeStyles", folderName2 = "runes";
-        List<JsonNode> mappedList = mapper.convertValue(dDragonApiCaller.callListApi(jsonName),
+        String apiPath = "/perk-images/Styles";
+        String folderName = "runeStyles";
+        List<JsonNode> mappedList = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName),
                 new TypeReference<List<JsonNode>>(){});
 
         Map<String, String> runeStyles = new HashMap<>();
@@ -113,12 +120,23 @@ public class DDragonService {
         }
 
         for(Map.Entry<String, String> runeStyle : runeStyles.entrySet()) {
-            Path path = Paths.get(basePath+"/"+folderName1+"/"+runeStyle.getKey()+".png");
-            if(Files.exists(path))  continue;
+            Path filePath = Paths.get(basePath+"/"+folderName+"/"+runeStyle.getKey()+".png");
+            if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dDragonApiCaller.callImgApi(assetName, runeStyle.getValue());
-            Files.write(path, imgBytes);
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, runeStyle.getValue());
+            Files.write(filePath, imgBytes);
         }
+
+        log.info("Update Runes finished");
+    }
+
+    public void updateRunes() throws IOException {
+        log.info("Update Runes started");
+
+        String jsonName = "runesReforged";
+        String folderName = "runes";
+        List<JsonNode> mappedList = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName),
+                new TypeReference<List<JsonNode>>(){});
 
         Map<String, String> runes = new HashMap<>();
         for(JsonNode node : mappedList) {
@@ -134,12 +152,16 @@ public class DDragonService {
         }
 
         for(Map.Entry<String, String> rune : runes.entrySet()) {
-            Path path = Paths.get(basePath+"/"+folderName2+"/"+rune.getKey()+".png");
+            Path path = Paths.get(basePath+"/"+folderName+"/"+rune.getKey()+".png");
             if(Files.exists(path))  continue;
 
-            String icon = rune.getValue();
-            byte[] imgBytes = dDragonApiCaller.callImgApi(icon.substring(0, icon.lastIndexOf("/")),
-                    icon.substring(icon.lastIndexOf("/")+1, icon.lastIndexOf(".")));
+
+            //imgPath e.g., perk-images/Styles/Domination/Electrocute/Electrocute.png
+            String imgPath = rune.getValue();
+            String apiPath = "/" + imgPath.substring(0, imgPath.lastIndexOf("/")+1);
+            String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1, imgPath.lastIndexOf("."));
+
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, imgName);
             Files.write(path, imgBytes);
         }
 

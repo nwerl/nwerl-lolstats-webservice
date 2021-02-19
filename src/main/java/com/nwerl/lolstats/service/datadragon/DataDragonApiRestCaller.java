@@ -1,6 +1,7 @@
-package com.nwerl.lolstats.service.dDragon;
+package com.nwerl.lolstats.service.datadragon;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -17,11 +18,13 @@ import java.util.List;
 
 
 @Component
-public class DDragonApiRestCaller implements DDragonApiCaller {
+public class DataDragonApiRestCaller implements DataDragonApiCaller {
     private final RestTemplate restTemplate;
     private String version;
 
-    public DDragonApiRestCaller(RestTemplateBuilder restTemplateBuilder) {
+    public DataDragonApiRestCaller(RestTemplateBuilder restTemplateBuilder,
+                                   @Value("${datadragon_protocol}") String scheme,
+                                   @Value("${datadragon_hostname}") String hostname){
         restTemplate = restTemplateBuilder.requestFactory(()->new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
                 .setConnectTimeout(Duration.ofMillis(20000))
                 .setReadTimeout(Duration.ofMillis(20000))
@@ -29,8 +32,7 @@ public class DDragonApiRestCaller implements DDragonApiCaller {
                 .build();
 
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory
-                (UriComponentsBuilder.newInstance()
-                        .scheme("https").host("ddragon.leagueoflegends.com")));
+                (UriComponentsBuilder.newInstance().scheme(scheme).host(hostname)));
     }
 
     @PostConstruct
@@ -52,16 +54,14 @@ public class DDragonApiRestCaller implements DDragonApiCaller {
         return restTemplate.getForObject(uri, JsonNode.class);
     }
 
-    public byte[] callImgApi(String assetName, String imgName) {
+    public byte[] callImgApi(String path, String imgName) {
         String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/img/"+assetName).path("/"+imgName+".png")
+                .path("/cdn").path("/"+version).path("/img"+path).path("/"+imgName+".png")
                 .build().toString();
 
-        if(assetName.contains("perk-images/Styles")) {
+        if(path.contains("/perk-images/Styles")) {
             uri = uri.replace("/"+version, "");
         }
-
-        System.out.println(uri);
 
         return restTemplate.getForObject(uri, byte[].class);
     }
