@@ -21,10 +21,13 @@ import java.util.List;
 public class DataDragonApiRestCaller implements DataDragonApiCaller {
     private final RestTemplate restTemplate;
     private String version;
+    private static final String lolVersionUri = "/api/versions.json";
+    private static final String listApiURi = "/cdn/%s/data/ko_KR/%s.json";
+    private static final String imageApiUri = "/cdn%s/img%s/%s.png";
 
     public DataDragonApiRestCaller(RestTemplateBuilder restTemplateBuilder,
-                                   @Value("${datadragon_protocol}") String scheme,
-                                   @Value("${datadragon_hostname}") String hostname){
+                                   @Value("${datadragon.protocol}") String scheme,
+                                   @Value("${datadragon.hostname}") String hostname){
         restTemplate = restTemplateBuilder.requestFactory(()->new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
                 .setConnectTimeout(Duration.ofMillis(20000))
                 .setReadTimeout(Duration.ofMillis(20000))
@@ -37,32 +40,20 @@ public class DataDragonApiRestCaller implements DataDragonApiCaller {
 
     @PostConstruct
     public String callApiCurrentLOLVersion() {
-        String uri =  UriComponentsBuilder.newInstance()
-                .path("/api").path("/versions.json")
-                .build().toString();
-
-        version = (String) (restTemplate.getForObject(uri, List.class).get(0));
-
+        version = (String) (restTemplate.getForObject(lolVersionUri, List.class).get(0));
         return version;
     }
 
     public JsonNode callListApi(String jsonName) {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/data").path("/ko_KR").path("/"+jsonName+".json")
-                .build().toString();
-
-        return restTemplate.getForObject(uri, JsonNode.class);
+        return restTemplate.getForObject(String.format(listApiURi, version, jsonName), JsonNode.class);
     }
 
     public byte[] callImgApi(String path, String imgName) {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/cdn").path("/"+version).path("/img"+path).path("/"+imgName+".png")
-                .build().toString();
+        String versionString = "";
 
-        if(path.contains("/perk-images/Styles")) {
-            uri = uri.replace("/"+version, "");
-        }
+        if(!path.contains(DataDragonPath.RUNE_STYLE.getApiPath()))
+            versionString = "/"+version;
 
-        return restTemplate.getForObject(uri, byte[].class);
+        return restTemplate.getForObject(String.format(imageApiUri, versionString, path, imgName), byte[].class);
     }
 }
