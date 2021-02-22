@@ -1,5 +1,7 @@
 package com.nwerl.lolstats.service;
 
+import com.nwerl.lolstats.service.datadragon.DataDragonApiCaller;
+import com.nwerl.lolstats.service.datadragon.DataDragonService;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +22,9 @@ public class ConnectToRiotApiTest {
     @Autowired
     private SummonerService summonerService;
     @Autowired
-    private DDragonService dDragonService;
+    private DataDragonService dataDragonService;
     @Autowired
-    private DDragonApiCaller dDragonApiCaller;
+    private DataDragonApiCaller dataDragonApiCaller;
 
     @Test
     public void connect_to_Riot_Api() {
@@ -33,22 +35,35 @@ public class ConnectToRiotApiTest {
 
     @Test
     public void update_Champions_Test() throws IOException {
-        dDragonService.updateChampions();
+        dataDragonService.updateChampions();
     }
 
     @Test
     public void update_Items_Test() throws IOException {
-        dDragonService.updateItems();
+        dataDragonService.updateItems();
     }
 
     @Test
     public void update_Spells_Test() throws IOException {
-        //System.out.println(dDragonApiCaller.callListApi("summoner").get("data").fieldNames().next());
-        dDragonService.updateSpells();
+        dataDragonService.updateSpells();
+    }
+
+    @Test
+    public void update_RuneStyles_Test() throws IOException {
+        dataDragonService.updateRuneStyles();
     }
 
     @Test
     public void update_Runes_Test() throws IOException {
-        dDragonService.updateRunes();
+        dataDragonService.updateRunes();
+    }
+
+    @Test
+    public void update_All_Images() throws IOException {
+        update_Champions_Test();
+        update_Items_Test();
+        update_Runes_Test();
+        update_RuneStyles_Test();
+        update_Spells_Test();
     }
 }

@@ -20,8 +20,8 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate restConfig(RestTemplateBuilder restTemplateBuilder,
                                    @Value("${apikey}") String apiKey,
-                                   @Value("${riotgames_protocol}") String scheme,
-                                   @Value("${riotgames_hostname}") String hostname) {
+                                   @Value("${riotgames.protocol}") String scheme,
+                                   @Value("${riotgames.hostname}") String hostname) {
         RestTemplate restTemplate = restTemplateBuilder.requestFactory(()->new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
                 .setConnectTimeout(Duration.ofMillis(20000))
                 .setReadTimeout(Duration.ofMillis(20000))
