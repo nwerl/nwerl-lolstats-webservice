@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.dto.riotApi.ddragon;
+package com.nwerl.lolstats.web.dto.riotApi.datadragon;
 
 import com.nwerl.lolstats.web.domain.champion.Champion;
 import lombok.Data;
