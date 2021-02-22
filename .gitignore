@@ -2,6 +2,6 @@
 .gradle
 .idea
 build
-application-apikey.properties
+application-riotapi.properties
 application-mongodb.properties
-application-api-hostname.properties
+application-filepath.properties
