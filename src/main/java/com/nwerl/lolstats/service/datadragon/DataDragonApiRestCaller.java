@@ -1,6 +1,9 @@
 package com.nwerl.lolstats.service.datadragon;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.nwerl.lolstats.web.dto.riotApi.datadragon.DataDragonChampionListDto;
+import com.nwerl.lolstats.web.dto.riotApi.datadragon.DataDragonItemListDto;
+import com.nwerl.lolstats.web.dto.riotApi.datadragon.DataDragonRuneListDto;
+import com.nwerl.lolstats.web.dto.riotApi.datadragon.DataDragonSpellListDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -14,7 +17,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.PostConstruct;
 import java.nio.charset.Charset;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -44,8 +50,28 @@ public class DataDragonApiRestCaller implements DataDragonApiCaller {
         return version;
     }
 
-    public JsonNode callListApi(String jsonName) {
-        return restTemplate.getForObject(String.format(listApiURi, version, jsonName), JsonNode.class);
+    public Map<Long, String> callChampionListApi(String jsonName) {
+        return restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonChampionListDto.class).toMap();
+    }
+
+    public List<String> callItemListApi(String jsonName) {
+        return restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonItemListDto.class).toList();
+    }
+
+    public Map<Long, String> callRuneStyleListApi(String jsonName) {
+        return Arrays.asList(restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonRuneListDto[].class)).stream()
+                .collect(Collectors.toMap(DataDragonRuneListDto::getId, DataDragonRuneListDto::getIcon));
+    }
+
+    public Map<Long, String> callRuneListApi(String jsonName) {
+        return Arrays.asList(restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonRuneListDto[].class)).stream()
+                .flatMap(runeList -> runeList.getSlots().stream())
+                .flatMap(slot -> slot.getRunes().stream())
+                .collect(Collectors.toMap(DataDragonRuneListDto.RiotSlotsDto.RiotRunesDto::getId, DataDragonRuneListDto.RiotSlotsDto.RiotRunesDto::getIcon));
+    }
+
+    public Map<Long, String> callSpellListApi(String jsonName) {
+        return restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonSpellListDto.class).toMap();
     }
 
     public byte[] callImgApi(String path, String imgName) {
