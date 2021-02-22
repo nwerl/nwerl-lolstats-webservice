@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,30 +24,28 @@ public class DataDragonService {
     private ObjectMapper mapper;
 
     @Autowired
-    public DataDragonService(DataDragonApiCaller dataDragonApiCaller) {
+    public DataDragonService(DataDragonApiCaller dataDragonApiCaller,
+                             @Value("${image.files.basepath}") String basePath) {
         this.mapper = new ObjectMapper();
         this.dataDragonApiCaller = dataDragonApiCaller;
-        basePath = "/home/nwerl/IdeaProjects/nwerl-lolstats-webservice/src/main/resources/static/images";
+        this.basePath = basePath;
     }
 
     //@EventListener(ApplicationReadyEvent.class)
     public void updateChampions() throws IOException {
         log.info("Update Champions started");
 
-        String jsonName = "champion";
-        String folderName = "champions";
-        String apiPath = "/champion";
-
-        Map<String, JsonNode> champions = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName).get("data"),
+        DataDragonPath paths = DataDragonPath.CHAMPION;
+        Map<String, JsonNode> champions = mapper.convertValue(dataDragonApiCaller.callListApi(paths.getJsonName()).get("data"),
                                                             new TypeReference<Map<String, JsonNode>>(){});
 
         for(Map.Entry<String, JsonNode> champion : champions.entrySet()) {
             String championId = champion.getValue().get("key").asText();
 
-            Path filePath = Paths.get(basePath+"/"+folderName+"/"+championId+".png");
+            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+championId+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imageBytes = dataDragonApiCaller.callImgApi(apiPath, champion.getKey());
+            byte[] imageBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), champion.getKey());
             Files.write(filePath, imageBytes);
         }
 
@@ -56,18 +55,16 @@ public class DataDragonService {
     public void updateItems() throws IOException {
         log.info("Update Items started");
 
-        String jsonName = "item";
-        String folderName = "items";
-        String apiPath = "/item";
+        DataDragonPath paths = DataDragonPath.ITEM;
 
-        List<String> items = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName).get("data").fieldNames(),
+        List<String> items = mapper.convertValue(dataDragonApiCaller.callListApi(paths.getJsonName()).get("data").fieldNames(),
                 new TypeReference<List<String>>(){});
 
         for(String itemId : items) {
-            Path filePath = Paths.get(basePath+"/"+folderName+"/"+itemId+".png");
+            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+itemId+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, itemId);
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), itemId);
             Files.write(filePath, imgBytes);
         }
 
@@ -77,13 +74,11 @@ public class DataDragonService {
     public void updateSpells() throws IOException {
         log.info("Update Spells started");
 
-        String jsonName = "summoner";
-        String folderName = "spells";
-        String apiPath = "/spell";
+        DataDragonPath paths = DataDragonPath.SPELL;
 
         Map<String, String> spells = new HashMap<>();
 
-        JsonNode jsonNode = dataDragonApiCaller.callListApi(jsonName).get("data");
+        JsonNode jsonNode = dataDragonApiCaller.callListApi(paths.getJsonName()).get("data");
         Iterator<String> it = jsonNode.fieldNames();
 
         while(it.hasNext()){
@@ -93,10 +88,10 @@ public class DataDragonService {
         }
 
         for(Map.Entry<String, String> spell : spells.entrySet()) {
-            Path filePath = Paths.get(basePath+"/"+folderName+"/"+spell.getKey()+".png");
+            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+spell.getKey()+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, spell.getValue());
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), spell.getValue());
             Files.write(filePath, imgBytes);
         }
 
@@ -106,10 +101,9 @@ public class DataDragonService {
     public void updateRuneStyles() throws IOException {
         log.info("Update RuneStyles started");
 
-        String jsonName = "runesReforged";
-        String apiPath = "/perk-images/Styles";
-        String folderName = "runeStyles";
-        List<JsonNode> mappedList = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName),
+        DataDragonPath paths = DataDragonPath.RUNE_STYLE;
+
+        List<JsonNode> mappedList = mapper.convertValue(dataDragonApiCaller.callListApi(paths.getJsonName()),
                 new TypeReference<List<JsonNode>>(){});
 
         Map<String, String> runeStyles = new HashMap<>();
@@ -120,10 +114,10 @@ public class DataDragonService {
         }
 
         for(Map.Entry<String, String> runeStyle : runeStyles.entrySet()) {
-            Path filePath = Paths.get(basePath+"/"+folderName+"/"+runeStyle.getKey()+".png");
+            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+runeStyle.getKey()+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dataDragonApiCaller.callImgApi(apiPath, runeStyle.getValue());
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), runeStyle.getValue());
             Files.write(filePath, imgBytes);
         }
 
@@ -133,9 +127,8 @@ public class DataDragonService {
     public void updateRunes() throws IOException {
         log.info("Update Runes started");
 
-        String jsonName = "runesReforged";
-        String folderName = "runes";
-        List<JsonNode> mappedList = mapper.convertValue(dataDragonApiCaller.callListApi(jsonName),
+        DataDragonPath paths = DataDragonPath.RUNE;
+        List<JsonNode> mappedList = mapper.convertValue(dataDragonApiCaller.callListApi(paths.getJsonName()),
                 new TypeReference<List<JsonNode>>(){});
 
         Map<String, String> runes = new HashMap<>();
@@ -152,7 +145,7 @@ public class DataDragonService {
         }
 
         for(Map.Entry<String, String> rune : runes.entrySet()) {
-            Path path = Paths.get(basePath+"/"+folderName+"/"+rune.getKey()+".png");
+            Path path = Paths.get(basePath+"/"+paths.getFolderName()+"/"+rune.getKey()+".png");
             if(Files.exists(path))  continue;
 
 
