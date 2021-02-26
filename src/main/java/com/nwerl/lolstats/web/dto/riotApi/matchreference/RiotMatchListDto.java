@@ -1,13 +1,15 @@
 package com.nwerl.lolstats.web.dto.riotApi.matchreference;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 
 import java.util.List;
 
 @Builder
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RiotMatchListDto {
     private Integer startIndex;
     private Integer totalGames;

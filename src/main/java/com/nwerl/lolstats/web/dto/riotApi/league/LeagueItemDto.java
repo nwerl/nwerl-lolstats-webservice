@@ -1,11 +1,13 @@
 package com.nwerl.lolstats.web.dto.riotApi.league;
 
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Builder
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LeagueItemDto {
     private String summonerId;
     private String summonerName;

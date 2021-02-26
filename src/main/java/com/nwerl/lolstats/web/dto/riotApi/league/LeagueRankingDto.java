@@ -1,10 +1,12 @@
 package com.nwerl.lolstats.web.dto.riotApi.league;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class LeagueRankingDto {
     private Integer rank;
     private String summonerName;

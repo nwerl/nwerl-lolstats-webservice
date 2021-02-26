@@ -1,8 +1,7 @@
 package com.nwerl.lolstats.web.dto.riotApi.match;
 
 import com.nwerl.lolstats.web.domain.match.Match;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.annotation.Id;
 import org.springframework.ui.Model;
@@ -12,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 @Builder
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RiotMatchDto {
-    @Id
     private Long gameId;
     private List<ParticipantIdentityDto> participantIdentities;
     private Integer queueId;
@@ -30,13 +31,19 @@ public class RiotMatchDto {
     private List<ParticipantDto> participants;
 
     @Builder
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ParticipantIdentityDto {
         private Integer participantId;
         private PlayerDto player;
 
         @Builder
-        @Data
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class PlayerDto {
             private Integer profileIcon;
             private String accountId;

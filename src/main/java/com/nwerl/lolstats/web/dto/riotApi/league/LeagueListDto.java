@@ -1,12 +1,14 @@
 package com.nwerl.lolstats.web.dto.riotApi.league;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LeagueListDto {
     private List<LeagueItemDto> entries;
     private Integer index;

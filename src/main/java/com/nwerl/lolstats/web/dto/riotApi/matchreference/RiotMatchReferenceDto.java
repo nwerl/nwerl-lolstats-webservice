@@ -1,10 +1,12 @@
 package com.nwerl.lolstats.web.dto.riotApi.matchreference;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Builder
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RiotMatchReferenceDto {
     private Long gameId;
     private String role;

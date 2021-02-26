@@ -3,8 +3,11 @@ package com.nwerl.lolstats.web.dto.riotApi.summoner;
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class SummonerDto {
     private String id;
     private String accountId;

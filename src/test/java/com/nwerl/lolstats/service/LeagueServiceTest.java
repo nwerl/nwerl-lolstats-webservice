@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 
@@ -23,6 +24,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
@@ -57,5 +59,18 @@ public class LeagueServiceTest {
 
         //then
         assertThat(leagueListDto.getEntries().get(0).getSummonerName(), is(name));
+    }
+
+    @Test
+    public void getChallengerLeagueList_5xxError_Test() {
+        //given
+        String uri  = "https://kr.api.riotgames.com/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key="+apiKey;
+        mockServer.expect(requestTo(uri)).andRespond(withServerError());
+
+        //when
+        LeagueListDto leagueListDto = leagueService.callApiChallengerLeagueItem();
+
+        //then
+
     }
 }
