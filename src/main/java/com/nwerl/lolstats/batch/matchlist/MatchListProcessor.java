@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.batch.matchlist;
 
-import com.nwerl.lolstats.service.MatchService;
+import com.nwerl.lolstats.service.match.MatchService;
 import com.nwerl.lolstats.web.domain.match.MatchReference;
 import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;

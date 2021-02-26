@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.batch.league;
 
-import com.nwerl.lolstats.service.LeagueService;
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
 import lombok.RequiredArgsConstructor;

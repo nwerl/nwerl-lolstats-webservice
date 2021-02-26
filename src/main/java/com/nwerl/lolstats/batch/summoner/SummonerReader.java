@@ -1,7 +1,8 @@
 package com.nwerl.lolstats.batch.summoner;
 
-import com.nwerl.lolstats.service.LeagueService;
-import com.nwerl.lolstats.service.SummonerService;
+import com.nwerl.lolstats.service.league.LeagueService;
+import com.nwerl.lolstats.service.summoner.SummonerApiCaller;
+import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,15 @@ import java.util.Queue;
 @Configuration
 public class SummonerReader implements ItemReader<SummonerDto> {
     private final SummonerService summonerService;
+    private final SummonerApiCaller summonerApiCaller;
     private Queue<String> notExistsSummonerQueue;
 
     @Autowired
     public SummonerReader(LeagueService leagueService,
-                          SummonerService summonerService) {
+                          SummonerService summonerService,
+                          SummonerApiCaller summonerApiCaller) {
         this.summonerService = summonerService;
+        this.summonerApiCaller = summonerApiCaller;
         this.notExistsSummonerQueue = new LinkedList<>();
 
         List<LeagueItemDto> list = leagueService.findAll().getEntries();
@@ -43,7 +47,7 @@ public class SummonerReader implements ItemReader<SummonerDto> {
             return null;
         else {
             Thread.sleep(1400);
-            return summonerService.callApiSummonerInfoBySummonerId(notExistsSummonerQueue.poll());
+            return summonerApiCaller.callApiSummonerInfoBySummonerId(notExistsSummonerQueue.poll());
         }
     }
 }

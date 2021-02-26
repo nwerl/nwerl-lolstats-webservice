@@ -1,26 +1,19 @@
 package com.nwerl.lolstats.batch;
 
-import com.nwerl.lolstats.service.LeagueService;
-import com.nwerl.lolstats.service.SummonerService;
-import com.nwerl.lolstats.web.domain.league.LeagueItem;
-import com.nwerl.lolstats.web.domain.summoner.Summoner;
+import com.nwerl.lolstats.service.league.LeagueService;
+import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
