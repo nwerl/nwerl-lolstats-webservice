@@ -1,9 +1,7 @@
-package com.nwerl.lolstats.service;
+package com.nwerl.lolstats.service.league;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.config.RestTemplateConfig;
-import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
 import org.junit.Test;
@@ -12,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 
@@ -28,15 +24,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
-@ImportAutoConfiguration(classes = {RestTemplateConfig.class})
-@RestClientTest(value = LeagueService.class)
-public class LeagueServiceTest {
+@ImportAutoConfiguration(classes = {LeagueApiRestCaller.class})
+@RestClientTest(value = LeagueApiRestCaller.class)
+public class LeagueApiCallerTest {
     @Autowired
-    private LeagueService leagueService;
+    private LeagueApiCaller leagueApiCaller;
     @Autowired
     private MockRestServiceServer mockServer;
-    @MockBean
-    private LeagueItemRepository leagueItemRepository;
     @Value("${apikey}")
     private String apiKey;
 
@@ -55,7 +49,7 @@ public class LeagueServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        LeagueListDto leagueListDto = leagueService.callApiChallengerLeagueItem();
+        LeagueListDto leagueListDto = leagueApiCaller.callApiChallengerLeagueItem();
 
         //then
         assertThat(leagueListDto.getEntries().get(0).getSummonerName(), is(name));
@@ -68,7 +62,7 @@ public class LeagueServiceTest {
         mockServer.expect(requestTo(uri)).andRespond(withServerError());
 
         //when
-        LeagueListDto leagueListDto = leagueService.callApiChallengerLeagueItem();
+        LeagueListDto leagueListDto = leagueApiCaller.callApiChallengerLeagueItem();
 
         //then
 

@@ -1,8 +1,7 @@
-package com.nwerl.lolstats.service;
+package com.nwerl.lolstats.service.match;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.config.RestTemplateConfig;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
 import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchListDto;
 import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
@@ -26,15 +25,13 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
-@ImportAutoConfiguration(classes = {RestTemplateConfig.class})
-@RestClientTest(value = MatchService.class)
-public class MatchServiceTest {
-    @Autowired
-    private MatchService matchService;
+@ImportAutoConfiguration(classes = {MatchApiRestCaller.class})
+@RestClientTest(value = MatchApiRestCaller.class)
+public class MatchApiCallerTest {
     @Autowired
     private MockRestServiceServer mockServer;
-    @MockBean
-    private MatchRepository matchRepository;
+    @Autowired
+    private MatchApiCaller matchApiCaller;
     @Value("${apikey}")
     private String apiKey;
 
@@ -52,7 +49,7 @@ public class MatchServiceTest {
         mockServer.expect(requestTo(uri)).andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        RiotMatchReferenceDto riotMatchReferenceDto = matchService.callApiLastMatchReference(accountId);
+        RiotMatchReferenceDto riotMatchReferenceDto = matchApiCaller.callApiLastMatchReference(accountId);
 
         //then
         assertThat(riotMatchReferenceDto.getGameId(), is(gameId));

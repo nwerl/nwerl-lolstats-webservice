@@ -1,8 +1,7 @@
-package com.nwerl.lolstats.service;
+package com.nwerl.lolstats.service.summoner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.config.RestTemplateConfig;
 import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
 import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
 import org.junit.Test;
@@ -22,17 +21,16 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
-@ImportAutoConfiguration(classes = {RestTemplateConfig.class})
-@RestClientTest(value = SummonerService.class)
-public class SummonerServiceTest {
-    @Autowired
-    private SummonerService summonerService;
+@ImportAutoConfiguration(classes = {SummonerApiRestCaller.class})
+@RestClientTest(value = SummonerApiRestCaller.class)
+public class SummonerApiCallerTest {
     @Autowired
     private MockRestServiceServer mockServer;
-    @MockBean
-    private SummonerRepository summonerRepository;
     @Value("${apikey}")
     private String apiKey;
+    @Autowired
+    private SummonerApiCaller summonerApiCaller;
+
 
     @Test
     public void getSummonerInfoByName_Test() throws JsonProcessingException {
@@ -47,7 +45,7 @@ public class SummonerServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerService.callApiSummonerInfoByName(name);
+        SummonerDto summonerDto = summonerApiCaller.callApiSummonerInfoByName(name);
 
         //then
         assertThat(summonerDto.getName(), is(name));
@@ -66,7 +64,7 @@ public class SummonerServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerService.callApiSummonerInfoBySummonerId(id);
+        SummonerDto summonerDto = summonerApiCaller.callApiSummonerInfoBySummonerId(id);
 
         //then
         assertThat(summonerDto.getId(), is(id));

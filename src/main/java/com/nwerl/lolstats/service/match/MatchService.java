@@ -1,5 +1,6 @@
-package com.nwerl.lolstats.service;
+package com.nwerl.lolstats.service.match;
 
+import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.domain.match.MatchListRepository;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
 import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
@@ -23,26 +24,11 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final MatchListRepository matchListRepository;
     private final SummonerService summonerService;
-    private final RestTemplate restTemplate;
 
     public Boolean existsByGameId(Long gameId) {
         return matchRepository.existsByGameId(gameId);
     }
 
-    public RiotMatchReferenceDto callApiLastMatchReference(String accountId) {
-        log.info("Call RiotApi to Get MatchReferences");
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/match/v4/matchlists/by-account/").path(accountId).queryParam("endIndex", "1")
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotMatchListDto.class).getMatches().get(0);
-    }
-
-    public RiotMatchDto callApiMatchByGameId(Long gameId) {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/match/v4/matches/").path(String.valueOf(gameId))
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotMatchDto.class);
-    }
 
     public MatchListDto getMatchListByName(String name) {
         String Id = summonerService.findAccountIdByName(name);
