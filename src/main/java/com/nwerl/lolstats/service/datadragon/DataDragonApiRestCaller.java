@@ -32,7 +32,7 @@ public class DataDragonApiRestCaller implements DataDragonApiCaller {
     private final RestTemplate restTemplate;
     private String version;
     private static final String lolVersionUri = "/api/versions.json";
-    private static final String listApiURi = "/cdn/%s/data/ko_KR/%s.json";
+    private static final String listApiUri = "/cdn/%s/data/ko_KR/%s.json";
     private static final String imageApiUri = "/cdn%s/img%s/%s.png";
 
     public DataDragonApiRestCaller(RestTemplateBuilder restTemplateBuilder,
@@ -58,26 +58,26 @@ public class DataDragonApiRestCaller implements DataDragonApiCaller {
     }
 
     public Map<Long, String> callChampionListApi(String jsonName) {
-        return Optional.ofNullable(restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonChampionListDto.class))
+        return Optional.ofNullable(restTemplate.getForObject(String.format(listApiUri, version, jsonName), DataDragonChampionListDto.class))
                 .map(DataDragonChampionListDto::toMap)
                 .orElse(Collections.emptyMap());
     }
 
     public List<String> callItemListApi(String jsonName) {
-        return Optional.ofNullable(restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonItemListDto.class))
+        return Optional.ofNullable(restTemplate.getForObject(String.format(listApiUri, version, jsonName), DataDragonItemListDto.class))
                 .map(DataDragonItemListDto::toList)
                 .orElse(Collections.emptyList());
     }
 
     public Map<Long, String> callRuneStyleListApi(String jsonName) {
-        return Optional.ofNullable(restTemplate.exchange(String.format(listApiURi, version, jsonName), HttpMethod.GET, null, new ParameterizedTypeReference<List<DataDragonRuneListDto>>(){}).getBody())
+        return Optional.ofNullable(restTemplate.exchange(String.format(listApiUri, version, jsonName), HttpMethod.GET, null, new ParameterizedTypeReference<List<DataDragonRuneListDto>>(){}).getBody())
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .collect(Collectors.toMap(DataDragonRuneListDto::getId, DataDragonRuneListDto::getIcon));
     }
 
     public Map<Long, String> callRuneListApi(String jsonName) {
-        return Optional.ofNullable(restTemplate.exchange(String.format(listApiURi, version, jsonName), HttpMethod.GET, null, new ParameterizedTypeReference<List<DataDragonRuneListDto>>(){}).getBody())
+        return Optional.ofNullable(restTemplate.exchange(String.format(listApiUri, version, jsonName), HttpMethod.GET, null, new ParameterizedTypeReference<List<DataDragonRuneListDto>>(){}).getBody())
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .flatMap(runeList -> runeList.getSlots().stream())
@@ -86,7 +86,7 @@ public class DataDragonApiRestCaller implements DataDragonApiCaller {
     }
 
     public Map<Long, String> callSpellListApi(String jsonName) {
-        return Optional.ofNullable(restTemplate.getForObject(String.format(listApiURi, version, jsonName), DataDragonSpellListDto.class))
+        return Optional.ofNullable(restTemplate.getForObject(String.format(listApiUri, version, jsonName), DataDragonSpellListDto.class))
                 .map(DataDragonSpellListDto::toMap)
                 .orElse(Collections.emptyMap());
     }
