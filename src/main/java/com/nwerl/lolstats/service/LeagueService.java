@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,11 +46,13 @@ public class LeagueService {
     }
 
     public List<LeagueRankingDto> getLeagueRanking() {
-        int i = 1;
+        AtomicInteger ranking = new AtomicInteger(1);
+
         List<LeagueRankingDto> leagueRankingDtos = new ArrayList<>();
         for(LeagueItem item : leagueItemRepository.findAllByOrderByLeaguePointsDesc()) {
-            leagueRankingDtos.add(new LeagueRankingDto(i++, item.getSummonerName(), item.getLeaguePoints()));
+            leagueRankingDtos.add(new LeagueRankingDto(ranking.getAndIncrement(), item.getSummonerName(), item.getLeaguePoints()));
         }
+
         return leagueRankingDtos;
     }
 }

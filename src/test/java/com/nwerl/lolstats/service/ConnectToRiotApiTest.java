@@ -34,6 +34,13 @@ public class ConnectToRiotApiTest {
     }
 
     @Test
+    public void update_Version_Test() {
+        String version = "11.4.1";
+
+        assertThat(version, is(dataDragonApiCaller.callApiCurrentLOLVersion()));
+    }
+
+    @Test
     public void update_Champions_Test() throws IOException {
         dataDragonService.updateChampions();
     }
