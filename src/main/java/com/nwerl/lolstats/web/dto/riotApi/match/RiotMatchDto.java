@@ -58,7 +58,10 @@ public class RiotMatchDto {
     }
 
     @Builder
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TeamStatsDto {
         private Integer towerKills;
         private Integer riftHeraldKills;
@@ -78,13 +81,20 @@ public class RiotMatchDto {
         private String win;
 
         @Builder
-        @Data
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         static class TeamBansDto {
             private Integer championId;
             private Integer pickTurn;
         }
     }
-    @Data
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class ParticipantDto {
         private Integer participantId;
         private Integer championId;
@@ -97,19 +107,31 @@ public class RiotMatchDto {
         private String highestAchievedSeasonTier;
         private List<MasteryDto> masteries;
 
-        @Data
+        @Builder
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         static class RuneDto {
             private Integer runeId;
             private Integer rank;
         }
 
-        @Data
+        @Builder
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class MasteryDto {
             private Integer rank;
             private Integer masteryId;
         }
 
-        @Data
+        @Builder
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class ParticipantStatsDto {
             private Integer item0;
             private Integer item2;
@@ -225,7 +247,10 @@ public class RiotMatchDto {
         }
 
         @Builder
-        @Data
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class ParticipantTimelineDto {
             private Integer participantId;
             private Map<String, Double> csDiffPerMinDeltas;
