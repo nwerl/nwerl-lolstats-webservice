@@ -38,9 +38,6 @@ public class LeagueJobConfig {
                 .reader(leagueItemReader)
                 .processor(leagueItemProcessor)
                 .writer(leagueItemWriter)
-                .faultTolerant()
-                .retryLimit(3)
-                .retry(HttpServerErrorException.class)
                 .build();
     }
 
@@ -53,7 +50,6 @@ public class LeagueJobConfig {
                 .reader(summonerReader)
                 .processor(summonerProcessor)
                 .writer(summonerWriter)
-                .listener(new SummonerListener())
                 .build();
     }
 
