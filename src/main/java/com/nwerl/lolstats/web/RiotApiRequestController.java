@@ -1,6 +1,7 @@
 package com.nwerl.lolstats.web;
 
 import com.nwerl.lolstats.service.league.LeagueService;
+import com.nwerl.lolstats.service.match.MatchApiCaller;
 import com.nwerl.lolstats.service.match.MatchService;
 import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 public class RiotApiRequestController {
     private final SummonerService summonerService;
-    private final MatchService matchService;
+    private final MatchApiCaller matchApiCaller;
     private final LeagueService leagueService;
 
     @GetMapping("/api/v1/get/summonerinfo/{name}")
@@ -27,12 +28,12 @@ public class RiotApiRequestController {
 
     @GetMapping("/api/v1/get/matchlists/{name}")
     public RiotMatchReferenceDto getLastMatchReference(@PathVariable String name) {
-        return matchService.callApiLastMatchReference(name);
+        return matchApiCaller.callApiLastMatchReference(name);
     }
 
     @GetMapping("/api/v1/get/matches/{gameId}")
     public RiotMatchDto getMatches(@PathVariable Long gameId) {
-        return matchService.callApiMatchByGameId(gameId);
+        return matchApiCaller.callApiMatchByGameId(gameId);
     }
 
     @GetMapping("/api/v1/get/leagues/challenger")
