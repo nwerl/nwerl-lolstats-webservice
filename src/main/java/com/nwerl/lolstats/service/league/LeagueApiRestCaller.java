@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.service.league;
 
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueListDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -8,17 +8,14 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.netty.http.server.HttpServer;
 
 import java.time.Duration;
 
 @Slf4j
-@Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 @Component
 public class LeagueApiRestCaller implements LeagueApiCaller{
     private final RestTemplate restTemplate;
@@ -39,9 +36,10 @@ public class LeagueApiRestCaller implements LeagueApiCaller{
                         .scheme(scheme).host(hostname).path("lol").queryParam("api_key", apiKey)));
     }
 
-    public LeagueListDto callApiChallengerLeagueItem() {
-        log.info("Call RiotApi to Get ChallengerLeagueItem");
+    @Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
+    public RiotLeagueListDto fetchChallengerLeagueListFromRiotApi() {
+        log.info("Call RiotApi to Get ChallengerLeagueList");
 
-        return restTemplate.getForObject(challengerLeagueUri, LeagueListDto.class);
+        return restTemplate.getForObject(challengerLeagueUri, RiotLeagueListDto.class);
     }
 }
