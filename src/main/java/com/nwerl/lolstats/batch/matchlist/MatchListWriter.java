@@ -1,7 +1,6 @@
 package com.nwerl.lolstats.batch.matchlist;
 
 
-import com.nwerl.lolstats.web.domain.match.Match;
 import com.nwerl.lolstats.web.domain.match.MatchList;
 import com.nwerl.lolstats.web.domain.match.MatchListRepository;
 import com.nwerl.lolstats.web.domain.match.MatchReference;
@@ -43,7 +42,7 @@ public class MatchListWriter implements ItemWriter<MatchReference> {
         }
         else {
             for(MatchReference item : items) {
-                matchListRepository.customMethod(accountId, item);
+                matchListRepository.matchListFindAndModify(accountId, item);
             }
         }
     }

@@ -2,7 +2,7 @@ package com.nwerl.lolstats.batch.matchlist;
 
 import com.nwerl.lolstats.service.match.MatchService;
 import com.nwerl.lolstats.web.domain.match.MatchReference;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -22,17 +22,20 @@ public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, 
 
     @Override
     public MatchReference process(RiotMatchReferenceDto item) throws Exception {
-        log.info("gameId : {}", item.getGameId());
+        Long gameId = item.getGameId();
+        Long timeStamp = item.getTimestamp();
 
-        if(matchService.existsByGameId(item.getGameId())) {
+        log.info("gameId : {}", gameId);
+
+        if(matchService.existsByGameId(gameId)) {
             log.info("MATCH EXISTS IN DB");
             stepExecution.setExitStatus(ExitStatus.FAILED);
         }
 
 
-        stepExecution.getJobExecution().getExecutionContext().put("GAME_ID", item.getGameId());
+        stepExecution.getJobExecution().getExecutionContext().put("GAME_ID", gameId);
 
-        return new MatchReference(item.getGameId(), item.getTimestamp());
+        return new MatchReference(gameId, timeStamp);
     }
 
     @BeforeStep
