@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.dto.riotApi.league;
+package com.nwerl.lolstats.web.dto.view;
 
 import lombok.*;
 
