@@ -1,10 +1,9 @@
 package com.nwerl.lolstats.batch;
 
-import com.nwerl.lolstats.batch.summoner.SummonerListener;
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
+import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -18,7 +17,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 
@@ -30,23 +28,24 @@ public class LeagueJobConfig {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Step leagueStep1(ItemReader<List<LeagueItemDto>> leagueItemReader,
-                            ItemProcessor<List<LeagueItemDto>, List<LeagueItem>> leagueItemProcessor,
-                            ItemWriter<List<LeagueItem>> leagueItemWriter) {
-        return stepBuilderFactory.get("leagueStep1")
-                .<List<LeagueItemDto>, List<LeagueItem>>chunk(1)
-                .reader(leagueItemReader)
-                .processor(leagueItemProcessor)
-                .writer(leagueItemWriter)
+    public Step leagueListStep(ItemReader<RiotLeagueItemDto> leagueReader,
+                               ItemProcessor<RiotLeagueItemDto, LeagueItem> leagueProcessor,
+                               ItemWriter<LeagueItem>  leagueWriter) {
+        return stepBuilderFactory.get("leagueListReader")
+                .<RiotLeagueItemDto, LeagueItem>chunk(1)
+                .reader(leagueReader)
+                .processor(leagueProcessor)
+                .writer(leagueWriter)
                 .build();
     }
 
+
     @Bean
-    public Step leagueStep2(ItemReader<SummonerDto> summonerReader,
-                            ItemProcessor<SummonerDto, Summoner> summonerProcessor,
+    public Step summonerStep(ItemReader<RiotSummonerDto> summonerReader,
+                            ItemProcessor<RiotSummonerDto, Summoner> summonerProcessor,
                             ItemWriter<Summoner> summonerWriter) {
-        return stepBuilderFactory.get("leagueStep2")
-                .<SummonerDto, Summoner>chunk(1)
+        return stepBuilderFactory.get("summonerStep")
+                .<RiotSummonerDto, Summoner>chunk(1)
                 .reader(summonerReader)
                 .processor(summonerProcessor)
                 .writer(summonerWriter)
@@ -55,12 +54,12 @@ public class LeagueJobConfig {
 
 
     @Bean
-    public Job leagueJob(@Qualifier("leagueStep1") Step leagueStep1,
-                         @Qualifier("leagueStep2") Step leagueStep2) {
+    public Job leagueJob(@Qualifier("leagueListStep") Step leagueListStep,
+                         @Qualifier("summonerStep") Step summonerStep) {
         return jobBuilderFactory.get("leagueJob")
                 .incrementer(new RunIdIncrementer())
-                .start(leagueStep1).on("FAILED").end()
-                .from(leagueStep1).on("*").to(leagueStep2)
+                .start(leagueListStep).on("FAILED").end()
+                .from(leagueListStep).on("*").to(summonerStep)
                 .end()
                 .build();
     }
