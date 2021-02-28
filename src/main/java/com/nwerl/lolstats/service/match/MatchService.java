@@ -3,16 +3,12 @@ package com.nwerl.lolstats.service.match;
 import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.domain.match.MatchListRepository;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import com.nwerl.lolstats.web.dto.view.MatchDto;
 import com.nwerl.lolstats.web.dto.view.MatchListDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchListDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +19,16 @@ import java.util.List;
 public class MatchService {
     private final MatchRepository matchRepository;
     private final MatchListRepository matchListRepository;
+    private final MatchApiCaller matchApiCaller;
     private final SummonerService summonerService;
 
     public Boolean existsByGameId(Long gameId) {
         return matchRepository.existsByGameId(gameId);
     }
 
+    public RiotMatchReferenceDto fetchLastMatchReferenceFromRiotApi(String accountId) {
+        return matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().get(0);
+    }
 
     public MatchListDto getMatchListByName(String name) {
         String Id = summonerService.findAccountIdByName(name);
