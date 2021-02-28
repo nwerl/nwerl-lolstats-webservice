@@ -13,5 +13,5 @@ public interface MatchListRepository extends MongoRepository<MatchList, String>,
 
     @Query(value = "{_id: ?0}", fields = "{matchReferences: {$slice: [?1, ?2]}}")
     public MatchList findByAccountId(String id, int skip, int limit);
-    public void customMethod(String accountId, MatchReference matchReference);
+    public void matchListFindAndModify(String accountId, MatchReference matchReference);
 }
