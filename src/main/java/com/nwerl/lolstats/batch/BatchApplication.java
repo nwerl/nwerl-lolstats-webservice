@@ -2,8 +2,8 @@ package com.nwerl.lolstats.batch;
 
 import com.nwerl.lolstats.service.league.LeagueService;
 import com.nwerl.lolstats.service.summoner.SummonerService;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueListDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -27,7 +27,7 @@ public class BatchApplication {
     private final LeagueService leagueService;
     private final SummonerService summonerService;
 
-    private LeagueListDto leagueList;
+    private RiotLeagueListDto leagueList;
     private Map<String, String> accountIdMap;
 
     @Autowired
@@ -53,19 +53,20 @@ public class BatchApplication {
         JobExecution execution = jobLauncher.run(leagueJob, param);
 
         leagueList = this.leagueService.findAll();
-        for(LeagueItemDto item : leagueList.getEntries()) {
+        for(RiotLeagueItemDto item : leagueList.getEntries()) {
             accountIdMap.put(item.getSummonerName(), summonerService.findAccountIdById(item.getSummonerId()));
         }
     }
-
 
     @Scheduled(fixedRateString = "3000", initialDelay = 5000)
     public void matchLaunch() throws Exception {
         log.info("Job Started at : {}", new Date());
 
+        String summonerName = leagueList.traversal().getSummonerName();
+
         JobParameters param = new JobParametersBuilder()
-                .addString("accountId",  accountIdMap.get(leagueList.traversal().getSummonerName()))
-                .addString("summonerName", leagueList.traversal().getSummonerName())
+                .addString("accountId",  accountIdMap.get(summonerName))
+                .addString("summonerName", summonerName)
                 .addString("dateTime", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
         JobExecution execution = jobLauncher.run(matchJob, param);
