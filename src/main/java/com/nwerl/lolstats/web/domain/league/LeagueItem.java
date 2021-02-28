@@ -1,7 +1,7 @@
 package com.nwerl.lolstats.web.domain.league;
 
 import com.mongodb.lang.Nullable;
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueItemDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,8 +33,8 @@ public class LeagueItem {
     @Nullable
     private String recentMatchTime;
 
-    public LeagueItemDto of() {
-        return LeagueItemDto.builder()
+    public RiotLeagueItemDto of() {
+        return RiotLeagueItemDto.builder()
                 .summonerId(summonerId)
                 .summonerName(summonerName)
                 .leaguePoints(leaguePoints)
