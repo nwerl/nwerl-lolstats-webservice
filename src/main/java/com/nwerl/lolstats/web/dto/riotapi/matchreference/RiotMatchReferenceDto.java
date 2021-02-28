@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.dto.riotApi.matchreference;
+package com.nwerl.lolstats.web.dto.riotapi.matchreference;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.dto.riotApi.league;
+package com.nwerl.lolstats.web.dto.riotapi.league;
 
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LeagueItemDto {
+public class RiotLeagueItemDto {
     private String summonerId;
     private String summonerName;
     private Integer leaguePoints;

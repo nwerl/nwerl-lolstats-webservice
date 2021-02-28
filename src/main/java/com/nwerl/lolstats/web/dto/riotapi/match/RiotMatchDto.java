@@ -1,10 +1,7 @@
-package com.nwerl.lolstats.web.dto.riotApi.match;
+package com.nwerl.lolstats.web.dto.riotapi.match;
 
 import com.nwerl.lolstats.web.domain.match.Match;
 import lombok.*;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.annotation.Id;
-import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
