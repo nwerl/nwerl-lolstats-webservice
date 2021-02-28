@@ -1,8 +1,7 @@
 package com.nwerl.lolstats.batch.match;
 
 import com.nwerl.lolstats.service.match.MatchApiCaller;
-import com.nwerl.lolstats.service.match.MatchService;
-import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepExecution;
@@ -18,24 +17,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class MatchReader implements ItemReader<RiotMatchDto> {
     private final MatchApiCaller matchApiCaller;
+
     private Long gameId;
-    private Boolean flag = false;
+    private RiotMatchDto matchItem;
+
+    @BeforeStep
+    public void setGameId(StepExecution stepExecution) {
+        ExecutionContext jobExecutionContext = stepExecution.getJobExecution().getExecutionContext();
+        gameId = jobExecutionContext.getLong("GAME_ID");
+    }
 
     @Override
     public RiotMatchDto read() throws Exception {
-        if(!flag){
-            flag = true;
-            return matchApiCaller.callApiMatchByGameId(gameId);
-        }
-        else {
+        if(!matchItemIsNotInitialized())
             return null;
-        }
 
+        matchItem = matchApiCaller.fetchMatchFromRiotApi(this.gameId);
+        return matchItem;
     }
 
-    @BeforeStep
-    public void getGameId(StepExecution stepExecution) {
-        ExecutionContext jobExecutionContext = stepExecution.getJobExecution().getExecutionContext();
-        gameId = jobExecutionContext.getLong("GAME_ID");
+    private Boolean matchItemIsNotInitialized() {
+        return matchItem == null;
     }
 }
