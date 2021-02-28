@@ -2,15 +2,13 @@ package com.nwerl.lolstats.service.summoner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -40,15 +38,15 @@ public class SummonerApiCallerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
 
-        String expectResult = objectMapper.writeValueAsString(SummonerDto.builder().name("Vehumet").build());
+        String expectResult = objectMapper.writeValueAsString(RiotSummonerDto.builder().name("Vehumet").build());
         mockServer.expect(requestTo(uri))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerApiCaller.callApiSummonerInfoByName(name);
+        RiotSummonerDto riotSummonerDto = summonerApiCaller.fetchSummonerFromRiotApiByName(name);
 
         //then
-        assertThat(summonerDto.getName(), is(name));
+        assertThat(riotSummonerDto.getName(), is(name));
     }
 
     @Test
@@ -59,14 +57,14 @@ public class SummonerApiCallerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
 
-        String expectResult = objectMapper.writeValueAsString(SummonerDto.builder().id(id).build());
+        String expectResult = objectMapper.writeValueAsString(RiotSummonerDto.builder().id(id).build());
         mockServer.expect(requestTo(uri))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        SummonerDto summonerDto = summonerApiCaller.callApiSummonerInfoBySummonerId(id);
+        RiotSummonerDto riotSummonerDto = summonerApiCaller.fetchSummonerFromRiotApiById(id);
 
         //then
-        assertThat(summonerDto.getId(), is(id));
+        assertThat(riotSummonerDto.getId(), is(id));
     }
 }

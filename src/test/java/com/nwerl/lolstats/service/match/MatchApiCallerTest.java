@@ -2,16 +2,14 @@ package com.nwerl.lolstats.service.match;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nwerl.lolstats.web.domain.match.MatchRepository;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchListDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchListDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -49,7 +47,7 @@ public class MatchApiCallerTest {
         mockServer.expect(requestTo(uri)).andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         //when
-        RiotMatchReferenceDto riotMatchReferenceDto = matchApiCaller.callApiLastMatchReference(accountId);
+        RiotMatchReferenceDto riotMatchReferenceDto = matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().get(0);
 
         //then
         assertThat(riotMatchReferenceDto.getGameId(), is(gameId));

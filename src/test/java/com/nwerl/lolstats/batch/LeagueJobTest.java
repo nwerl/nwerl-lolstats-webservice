@@ -1,7 +1,6 @@
 package com.nwerl.lolstats.batch;
 
 import com.nwerl.lolstats.service.league.LeagueApiCaller;
-import com.nwerl.lolstats.service.league.LeagueService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.*;
@@ -41,7 +40,7 @@ public class LeagueJobTest {
     @Test
     public void leagueJob_Retry_Test() throws Exception {
         JobLauncher jobLauncher = jobLauncherTestUtils.getJobLauncher();
-        given(leagueApiCaller.callApiChallengerLeagueItem()).willThrow(HttpServerErrorException.class);
+        given(leagueApiCaller.fetchChallengerLeagueListFromRiotApi()).willThrow(HttpServerErrorException.class);
         JobExecution jobExecution = jobLauncher.run(job, new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters());
         ExitStatus exitStatus = jobExecution.getExitStatus();
         assertThat(exitStatus.getExitCode(), is("COMPLETED"));
