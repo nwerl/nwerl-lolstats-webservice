@@ -12,13 +12,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class LeagueItemWriter implements ItemWriter<List<LeagueItem>> {
+public class LeagueItemWriter implements ItemWriter<LeagueItem> {
     private final LeagueItemRepository leagueItemRepository;
 
     @Override
-    public void write(List<? extends List<LeagueItem>> items) throws Exception {
-        for(List<LeagueItem> item : items){
-            leagueItemRepository.saveAll(item);
-        }
+    public void write(List<? extends LeagueItem> items) {
+        leagueItemRepository.saveAll(items);
     }
 }
