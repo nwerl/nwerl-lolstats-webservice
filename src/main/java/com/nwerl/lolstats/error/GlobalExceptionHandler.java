@@ -1,7 +1,6 @@
 package com.nwerl.lolstats.error;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
