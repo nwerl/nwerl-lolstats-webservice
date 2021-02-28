@@ -1,8 +1,8 @@
 package com.nwerl.lolstats.service.summoner;
 
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 
 public interface SummonerApiCaller {
-    SummonerDto callApiSummonerInfoByName(String name);
-    SummonerDto callApiSummonerInfoBySummonerId(String id);
+    RiotSummonerDto fetchSummonerFromRiotApiByName(String name);
+    RiotSummonerDto fetchSummonerFromRiotApiById(String id);
 }

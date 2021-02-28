@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.service.summoner;
 
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -36,19 +36,19 @@ public class SummonerApiRestCaller implements SummonerApiCaller{
                         .scheme(scheme).host(hostname).path("lol").queryParam("api_key", apiKey)));
     }
 
-    public SummonerDto callApiSummonerInfoBySummonerId(String id) {
+    public RiotSummonerDto fetchSummonerFromRiotApiById(String id) {
         log.info("Call RiotApi to Get SummonerInfo : {}", id);
         String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/")
                 .path(id)
                 .build().toString();
-        return restTemplate.getForObject(uri, SummonerDto.class);
+        return restTemplate.getForObject(uri, RiotSummonerDto.class);
     }
 
-    public SummonerDto callApiSummonerInfoByName(String name) {
+    public RiotSummonerDto fetchSummonerFromRiotApiByName(String name) {
         log.info("Call RiotApi to Get SummonerInfo : {}", name);
         String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/by-name/")
                 .path(name)
                 .build().toString();
-        return restTemplate.getForObject(uri, SummonerDto.class);
+        return restTemplate.getForObject(uri, RiotSummonerDto.class);
     }
 }
