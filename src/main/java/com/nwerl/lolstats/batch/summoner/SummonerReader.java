@@ -3,8 +3,8 @@ package com.nwerl.lolstats.batch.summoner;
 import com.nwerl.lolstats.service.league.LeagueService;
 import com.nwerl.lolstats.service.summoner.SummonerApiCaller;
 import com.nwerl.lolstats.service.summoner.SummonerService;
-import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
+import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
@@ -43,7 +43,6 @@ public class SummonerReader implements ItemReader<RiotSummonerDto> {
         if(nextSummonerId == null)
             return null;
 
-        Thread.sleep(1400);
 
         return summonerApiCaller.fetchSummonerFromRiotApiById(nextSummonerId);
     }
