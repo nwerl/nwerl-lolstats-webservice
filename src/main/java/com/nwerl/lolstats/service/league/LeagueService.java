@@ -25,6 +25,10 @@ public class LeagueService {
         return new RiotLeagueListDto(leagueItemRepository.findAll().stream().map(LeagueItem::of).collect(Collectors.toList()));
     }
 
+    public void deleteAll() {
+        leagueItemRepository.deleteAll();
+    }
+
     //ChallengerLeagueList를 갱신함.
     public RiotLeagueListDto updateChallengerLeagueList() {
         List<RiotLeagueItemDto> list = leagueApiCaller.fetchChallengerLeagueListFromRiotApi().getEntries();
