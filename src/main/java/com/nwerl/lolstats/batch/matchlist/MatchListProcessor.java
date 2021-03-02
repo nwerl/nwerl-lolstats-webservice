@@ -1,45 +1,39 @@
 package com.nwerl.lolstats.batch.matchlist;
 
+
+import com.nwerl.lolstats.batch.MatchIdSet;
 import com.nwerl.lolstats.service.match.MatchService;
+import com.nwerl.lolstats.web.domain.match.MatchList;
 import com.nwerl.lolstats.web.domain.match.MatchReference;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 @Slf4j
 @RequiredArgsConstructor
 @StepScope
 @Component
-public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, MatchReference> {
+public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, MatchList> {
     private final MatchService matchService;
-    private StepExecution stepExecution;
+    private final MatchIdSet matchIdSet;
 
     @Override
-    public MatchReference process(RiotMatchReferenceDto item) throws Exception {
+    public MatchList process(RiotMatchReferenceDto item) throws Exception {
         Long gameId = item.getGameId();
         Long timeStamp = item.getTimestamp();
 
-        log.info("gameId : {}", gameId);
-
-        if(matchService.existsByGameId(gameId)) {
-            log.info("MATCH EXISTS IN DB");
-            stepExecution.setExitStatus(ExitStatus.FAILED);
+        if(!matchService.existsByGameId(gameId)) {
+            log.info("{}'s GAME {} NOT EXISTS IN DB", item.getAccountId(), gameId);
+            matchIdSet.addMatchId(gameId);
         }
 
+        Thread.sleep(1400);
 
-        stepExecution.getJobExecution().getExecutionContext().put("GAME_ID", gameId);
-
-        return new MatchReference(gameId, timeStamp);
-    }
-
-    @BeforeStep
-    public void setGameId(StepExecution stepExecution) {
-        this.stepExecution = stepExecution;
+        return MatchList.builder().accountId(item.getAccountId()).matchReferences(Collections.singletonList(new MatchReference(gameId, timeStamp))).build();
     }
 }
