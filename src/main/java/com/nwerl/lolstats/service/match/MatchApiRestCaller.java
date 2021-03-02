@@ -2,7 +2,6 @@ package com.nwerl.lolstats.service.match;
 
 import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchListDto;
-import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -47,6 +46,7 @@ public class MatchApiRestCaller implements MatchApiCaller{
     }
 
     public RiotMatchDto fetchMatchFromRiotApi(Long gameId) {
+        log.info("Call RiotApi to Get Match {}", gameId);
         String uri = UriComponentsBuilder.newInstance()
                 .path("/match/v4/matches/").path(String.valueOf(gameId))
                 .build().toString();
