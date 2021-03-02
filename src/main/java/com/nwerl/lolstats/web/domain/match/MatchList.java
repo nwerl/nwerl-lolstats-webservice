@@ -17,14 +17,12 @@ import java.util.stream.Collectors;
 public class MatchList {
     @Id
     private String accountId;
-    private String summonerName;
 
     private List<MatchReference> matchReferences;
 
     public MatchListDto of() {
         return MatchListDto.builder()
                 .accountId(accountId)
-                .summonerName(summonerName)
                 .matchReferences(
                         this.matchReferences.stream()
                         .map(matchReferences->

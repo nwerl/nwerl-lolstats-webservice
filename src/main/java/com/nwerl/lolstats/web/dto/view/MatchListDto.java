@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.web.dto.view;
 
-import com.nwerl.lolstats.web.domain.match.MatchReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +13,6 @@ import java.util.List;
 public class MatchListDto {
     @Id
     private String accountId;
-    private String summonerName;
 
     private List<MatchReferenceDto> matchReferences;
 
