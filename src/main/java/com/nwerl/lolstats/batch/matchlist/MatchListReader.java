@@ -1,41 +1,54 @@
 package com.nwerl.lolstats.batch.matchlist;
 
-import com.nwerl.lolstats.service.match.MatchApiCaller;
+import com.nwerl.lolstats.service.league.LeagueService;
 import com.nwerl.lolstats.service.match.MatchService;
-import com.nwerl.lolstats.web.domain.match.MatchReference;
+import com.nwerl.lolstats.service.summoner.SummonerService;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @StepScope
 @Component
 public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
-    private final MatchApiCaller matchApiCaller;
+    private final MatchService matchService;
+    private final LeagueService leagueService;
+    private final SummonerService summonerService;
 
-    @Value("#{jobParameters[accountId]}")
-    private String accountId;
-    private RiotMatchReferenceDto lastMatchReferenceItem;
+    private Queue<String> leagueItemAccountIdQueue;
 
     @Override
     public RiotMatchReferenceDto read() throws Exception{
-        if(!lastMatchReferenceItemIsNotInitialized())
-            return null;
+        if(leagueItemAccountIdQueueIsNotInitialized()) {
+            setLeagueItemAccountIdQueue();
+        }
 
-        lastMatchReferenceItem = getLastMatchReference();
-        return lastMatchReferenceItem;
+        String accountId =  leagueItemAccountIdQueue.poll();
+        if(accountId == null)   return null;
+
+        return getLastMatchReference(accountId);
     }
 
-    private RiotMatchReferenceDto getLastMatchReference() {
-        return matchApiCaller.fetchMatchListFromRiotApi(this.accountId).getMatches().get(0);
+    private RiotMatchReferenceDto getLastMatchReference(String accountId) throws InterruptedException {
+        return matchService.fetchLastMatchReferenceFromRiotApi(accountId);
     }
 
-    private Boolean lastMatchReferenceItemIsNotInitialized() {
-        return lastMatchReferenceItem == null;
+    private Boolean leagueItemAccountIdQueueIsNotInitialized() {
+        return leagueItemAccountIdQueue == null;
+    }
+
+    private void setLeagueItemAccountIdQueue() {
+        leagueItemAccountIdQueue = new LinkedList<>(summonerService.findAccountIdListByIdList(
+                leagueService.findAll().getEntries().stream()
+                .map(RiotLeagueItemDto::getSummonerId).collect(Collectors.toList())));
     }
 }
