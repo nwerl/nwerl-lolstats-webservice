@@ -1,7 +1,7 @@
 package com.nwerl.lolstats.batch;
 
 import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.domain.match.MatchReference;
+import com.nwerl.lolstats.web.domain.match.MatchList;
 import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +36,10 @@ public class MatchJobConfig {
 
     @Bean
     public Step matchReferenceStep(ItemReader<RiotMatchReferenceDto> matchListReader,
-                           ItemProcessor<RiotMatchReferenceDto, MatchReference> matchListProcessor,
-                           ItemWriter<MatchReference> matchListWriter) {
+                           ItemProcessor<RiotMatchReferenceDto, MatchList> matchListProcessor,
+                           ItemWriter<MatchList> matchListWriter) {
         return stepBuilderFactory.get("matchReferenceStep")
-                .<RiotMatchReferenceDto, MatchReference>chunk(1)
+                .<RiotMatchReferenceDto, MatchList>chunk(1)
                 .reader(matchListReader)
                 .processor(matchListProcessor)
                 .writer(matchListWriter)
