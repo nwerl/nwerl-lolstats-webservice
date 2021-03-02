@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -19,7 +22,17 @@ public class SummonerService {
     }
 
     public String findAccountIdById(String id) {
-        return summonerRepository.findById(id).get().getAccountId();
+        return summonerRepository.findById(id).map(Summoner::getAccountId).orElse("");
+    }
+
+    public List<String> findAccountIdListByIdList(List<String> summonerIdList) {
+        List<String> accountIdList = new ArrayList<>();
+
+        for(String id : summonerIdList) {
+            accountIdList.add(findAccountIdById(id));
+        }
+
+        return accountIdList;
     }
 
     public RiotSummonerDto fetchSummonerFromRiotApiByName(String name) {
