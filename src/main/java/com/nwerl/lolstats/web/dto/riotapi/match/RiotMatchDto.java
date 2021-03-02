@@ -264,7 +264,7 @@ public class RiotMatchDto {
 
     public Match toEntity() {
         List<Match.Player> list = new ArrayList<>();
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<participantIdentities.size();i++) {
             list.add(Match.Player.builder()
                     .accountId(participantIdentities.get(i).player.getAccountId())
                     .summonerName(participantIdentities.get(i).player.getSummonerName())
