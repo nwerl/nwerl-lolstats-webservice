@@ -17,11 +17,4 @@ public class RiotLeagueListDto {
         this.entries = entries;
         this.index = 0;
     }
-
-    public RiotLeagueItemDto traversal() {
-        RiotLeagueItemDto entry = entries.get(index);
-        index = (index+1<entries.size()) ? index+1 : 0;
-
-        return entry;
-    }
 }
