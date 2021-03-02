@@ -16,4 +16,6 @@ public class RiotMatchReferenceDto {
     private Integer queue;
     private String lane;
     private Long timestamp;
+
+    private String accountId;
 }

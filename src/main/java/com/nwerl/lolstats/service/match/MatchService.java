@@ -3,6 +3,7 @@ package com.nwerl.lolstats.service.match;
 import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.domain.match.MatchListRepository;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
+import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import com.nwerl.lolstats.web.dto.view.MatchDto;
 import com.nwerl.lolstats.web.dto.view.MatchListDto;
@@ -27,7 +28,14 @@ public class MatchService {
     }
 
     public RiotMatchReferenceDto fetchLastMatchReferenceFromRiotApi(String accountId) {
-        return matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().get(0);
+       RiotMatchReferenceDto dto = matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().get(0);
+       dto.setAccountId(accountId);
+
+       return dto;
+    }
+
+    public RiotMatchDto fetchMatchFromRiotApi(Long gameId) {
+        return matchApiCaller.fetchMatchFromRiotApi(gameId);
     }
 
     public MatchListDto getMatchListByName(String name) {
@@ -42,6 +50,7 @@ public class MatchService {
     }
 
     public List<MatchDto> getMatchesByName(String name) {
+
         List<MatchListDto.MatchReferenceDto> matchReferences = getMatchListByName(name).getMatchReferences();
 
         List<MatchDto> list = new ArrayList<>();
