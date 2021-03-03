@@ -32,7 +32,7 @@ public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, 
             matchIdSet.addMatchId(gameId);
         }
 
-        Thread.sleep(1400);
+        //Thread.sleep(1400);
 
         return MatchList.builder().accountId(item.getAccountId()).matchReferences(Collections.singletonList(new MatchReference(gameId, timeStamp))).build();
     }
