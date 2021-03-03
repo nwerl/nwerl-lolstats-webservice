@@ -2,7 +2,7 @@ package com.nwerl.lolstats.batch.match;
 
 import com.nwerl.lolstats.batch.BatchApplication;
 import com.nwerl.lolstats.batch.MatchIdSet;
-import com.nwerl.lolstats.batch.MatchJobConfig;
+import com.nwerl.lolstats.batch.config.MatchJobConfig;
 import com.nwerl.lolstats.service.league.LeagueService;
 import com.nwerl.lolstats.service.match.MatchService;
 import com.nwerl.lolstats.service.summoner.SummonerService;

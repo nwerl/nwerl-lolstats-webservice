@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.batch;
+package com.nwerl.lolstats.batch.league;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 
 @TestConfiguration
 @EnableBatchProcessing
-public class BatchJobTestConfiguration {
+public class LeagueJobTestConfiguration {
     @Bean
     @Qualifier("leagueJob")
     JobLauncherTestUtils leagueJobUtils() {

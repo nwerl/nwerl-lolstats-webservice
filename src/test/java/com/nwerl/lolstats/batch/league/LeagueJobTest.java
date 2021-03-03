@@ -1,9 +1,13 @@
-package com.nwerl.lolstats.batch;
+package com.nwerl.lolstats.batch.league;
 
+import com.nwerl.lolstats.batch.BatchApplication;
 import com.nwerl.lolstats.service.league.LeagueApiCaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +27,7 @@ import static org.mockito.BDDMockito.given;
 @RunWith(SpringRunner.class)
 @MockBean(BatchApplication.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = {BatchJobTestConfiguration.class})
+@SpringBootTest(classes = {LeagueJobTestConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class LeagueJobTest {
     @Autowired
