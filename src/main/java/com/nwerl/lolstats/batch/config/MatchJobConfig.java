@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.batch;
+package com.nwerl.lolstats.batch.config;
 
 import com.nwerl.lolstats.web.domain.match.Match;
 import com.nwerl.lolstats.web.domain.match.MatchList;
@@ -11,7 +11,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -27,46 +26,38 @@ public class MatchJobConfig {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public ExecutionContextPromotionListener promotionListener () {
-        ExecutionContextPromotionListener executionContextPromotionListener = new ExecutionContextPromotionListener();
-        executionContextPromotionListener.setKeys(new String[]{"GAME_ID"});
-
-        return executionContextPromotionListener;
-    }
-
-    @Bean
-    public Step matchReferenceStep(ItemReader<RiotMatchReferenceDto> matchListReader,
-                           ItemProcessor<RiotMatchReferenceDto, MatchList> matchListProcessor,
-                           ItemWriter<MatchList> matchListWriter) {
-        return stepBuilderFactory.get("matchReferenceStep")
+    public Step matchListStep(ItemReader<RiotMatchReferenceDto> matchListReader,
+                              ItemProcessor<RiotMatchReferenceDto, MatchList> matchListProcessor,
+                              ItemWriter<MatchList> matchListWriter) {
+        return stepBuilderFactory.get("matchListStep")
                 .<RiotMatchReferenceDto, MatchList>chunk(1)
                 .reader(matchListReader)
                 .processor(matchListProcessor)
                 .writer(matchListWriter)
-                .listener(promotionListener())
+                .listener(new ItemFailureListener<RiotMatchReferenceDto, MatchList>().asItemProcessListener())
                 .build();
     }
 
     @Bean
     public Step matchStep(ItemReader<RiotMatchDto> matchReader,
-                           ItemProcessor<RiotMatchDto, Match> matchProcessor,
-                           ItemWriter<Match> matchWriter) {
+                          ItemProcessor<RiotMatchDto, Match> matchProcessor,
+                          ItemWriter<Match> matchWriter) {
         return stepBuilderFactory.get("matchStep")
                 .<RiotMatchDto, Match>chunk(1)
                 .reader(matchReader)
                 .processor(matchProcessor)
                 .writer(matchWriter)
-                .listener(promotionListener())
+                .listener(new ItemFailureListener<RiotMatchDto, Match>().asItemProcessListener())
                 .build();
     }
 
     @Bean
-    public Job matchJob(@Qualifier("matchReferenceStep") Step matchReferenceStep,
+    public Job matchJob(@Qualifier("matchListStep") Step matchListStep,
                         @Qualifier("matchStep") Step matchStep) {
         return jobBuilderFactory.get("matchJob")
                 .incrementer(new RunIdIncrementer())
-                .start(matchReferenceStep).on("FAILED").end()
-                .from(matchReferenceStep).on("*").to(matchStep)
+                .start(matchListStep).on("FAILED").end()
+                .from(matchListStep).on("*").to(matchStep)
                 .end()
                 .build();
     }

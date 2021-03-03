@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.batch;
+package com.nwerl.lolstats.batch.config;
 
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
@@ -36,6 +34,7 @@ public class LeagueJobConfig {
                 .reader(leagueReader)
                 .processor(leagueProcessor)
                 .writer(leagueWriter)
+                .listener(new ItemFailureListener<RiotLeagueItemDto, LeagueItem>().asItemProcessListener())
                 .build();
     }
 
@@ -49,6 +48,7 @@ public class LeagueJobConfig {
                 .reader(summonerReader)
                 .processor(summonerProcessor)
                 .writer(summonerWriter)
+                .listener(new ItemFailureListener<RiotSummonerDto, Summoner>().asItemProcessListener())
                 .build();
     }
 
