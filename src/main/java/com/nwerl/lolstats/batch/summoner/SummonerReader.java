@@ -1,14 +1,12 @@
 package com.nwerl.lolstats.batch.summoner;
 
 import com.nwerl.lolstats.service.league.LeagueService;
-import com.nwerl.lolstats.service.summoner.SummonerApiCaller;
 import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
 import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.LinkedList;
@@ -21,16 +19,12 @@ import java.util.Queue;
 @Configuration
 public class SummonerReader implements ItemReader<RiotSummonerDto> {
     private final SummonerService summonerService;
-    private final SummonerApiCaller summonerApiCaller;
 
     private Queue<String> summonerQueue;
 
-    @Autowired
     public SummonerReader(LeagueService leagueService,
-                          SummonerService summonerService,
-                          SummonerApiCaller summonerApiCaller) {
+                          SummonerService summonerService) {
         this.summonerService = summonerService;
-        this.summonerApiCaller = summonerApiCaller;
         this.summonerQueue = new LinkedList<>();
 
         setSummonerQueue(leagueService);
@@ -44,7 +38,7 @@ public class SummonerReader implements ItemReader<RiotSummonerDto> {
             return null;
 
 
-        return summonerApiCaller.fetchSummonerFromRiotApiById(nextSummonerId);
+        return summonerService.fetchSummonerFromRiotApiById(nextSummonerId);
     }
 
     private void setSummonerQueue(LeagueService leagueService) {
