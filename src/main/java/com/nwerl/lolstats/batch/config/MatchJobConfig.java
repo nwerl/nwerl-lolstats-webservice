@@ -17,6 +17,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +36,8 @@ public class MatchJobConfig {
                 .processor(matchListProcessor)
                 .writer(matchListWriter)
                 .listener(new ItemFailureListener<RiotMatchReferenceDto, MatchList>().asItemProcessListener())
+                .faultTolerant()
+                .noRollback(HttpClientErrorException.TooManyRequests.class)
                 .build();
     }
 
@@ -48,6 +51,8 @@ public class MatchJobConfig {
                 .processor(matchProcessor)
                 .writer(matchWriter)
                 .listener(new ItemFailureListener<RiotMatchDto, Match>().asItemProcessListener())
+                .faultTolerant()
+                .noRollback(HttpClientErrorException.TooManyRequests.class)
                 .build();
     }
 
