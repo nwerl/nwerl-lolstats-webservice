@@ -32,7 +32,7 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
             setLeagueItemAccountIdQueue();
         }
 
-        String accountId =  leagueItemAccountIdQueue.poll();
+        String accountId = leagueItemAccountIdQueue.poll();
         if(accountId == null)   return null;
 
         return getLastMatchReference(accountId);
