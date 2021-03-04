@@ -11,7 +11,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,14 +25,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+@Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 @Component
 public class DataDragonApiRestCaller implements DataDragonApiCaller {
     private final RestTemplate restTemplate;
     private String version;
-    private static final String lolVersionUri = "/api/versions.json";
-    private static final String listApiUri = "/cdn/%s/data/ko_KR/%s.json";
-    private static final String imageApiUri = "/cdn%s/img%s/%s.png";
 
     public DataDragonApiRestCaller(RestTemplateBuilder restTemplateBuilder,
                                    @Value("${datadragon.protocol}") String scheme,

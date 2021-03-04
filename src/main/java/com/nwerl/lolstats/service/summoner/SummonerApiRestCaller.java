@@ -38,17 +38,13 @@ public class SummonerApiRestCaller implements SummonerApiCaller{
 
     public RiotSummonerDto fetchSummonerFromRiotApiById(String id) {
         log.info("Call RiotApi to Get SummonerInfo : {}", id);
-        String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/")
-                .path(id)
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotSummonerDto.class);
+
+        return restTemplate.getForObject(String.format(summonerById, id), RiotSummonerDto.class);
     }
 
     public RiotSummonerDto fetchSummonerFromRiotApiByName(String name) {
         log.info("Call RiotApi to Get SummonerInfo : {}", name);
-        String uri = UriComponentsBuilder.newInstance().path("/summoner/v4/summoners/by-name/")
-                .path(name)
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotSummonerDto.class);
+
+        return restTemplate.getForObject(String.format(summonerByName, name), RiotSummonerDto.class);
     }
 }

@@ -22,6 +22,7 @@ import java.time.Duration;
 public class MatchApiRestCaller implements MatchApiCaller{
     private final RestTemplate restTemplate;
 
+
     public MatchApiRestCaller(RestTemplateBuilder restTemplateBuilder,
                               @Value("${apikey}") String apiKey,
                               @Value("${riotgames.protocol}") String scheme,
@@ -39,17 +40,13 @@ public class MatchApiRestCaller implements MatchApiCaller{
 
     public RiotMatchListDto fetchMatchListFromRiotApi(String accountId) {
         log.info("Call RiotApi to Get MatchReferences");
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/match/v4/matchlists/by-account/").path(accountId).queryParam("endIndex", "1")
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotMatchListDto.class);
+
+        return restTemplate.getForObject(String.format(matchListUri, accountId), RiotMatchListDto.class);
     }
 
     public RiotMatchDto fetchMatchFromRiotApi(Long gameId) {
         log.info("Call RiotApi to Get Match {}", gameId);
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/match/v4/matches/").path(String.valueOf(gameId))
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotMatchDto.class);
+
+        return restTemplate.getForObject(String.format(matchUri, String.valueOf(gameId)), RiotMatchDto.class);
     }
 }

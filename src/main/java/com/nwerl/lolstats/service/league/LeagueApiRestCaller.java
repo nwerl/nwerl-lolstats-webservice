@@ -16,10 +16,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.Duration;
 
 @Slf4j
+@Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 @Component
 public class LeagueApiRestCaller implements LeagueApiCaller{
     private final RestTemplate restTemplate;
-    private static final String challengerLeagueUri = "/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5";
+
 
     public LeagueApiRestCaller(RestTemplateBuilder restTemplateBuilder,
                                @Value("${apikey}") String apiKey,
@@ -36,7 +37,6 @@ public class LeagueApiRestCaller implements LeagueApiCaller{
                         .scheme(scheme).host(hostname).path("lol").queryParam("api_key", apiKey)));
     }
 
-    @Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
     public RiotLeagueListDto fetchChallengerLeagueListFromRiotApi() {
         log.info("Call RiotApi to Get ChallengerLeagueList");
 
