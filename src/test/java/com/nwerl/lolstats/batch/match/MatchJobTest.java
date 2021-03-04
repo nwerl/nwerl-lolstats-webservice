@@ -71,7 +71,7 @@ public class MatchJobTest {
         {
             Long gameId = Long.parseLong(accountId);
             RiotMatchDto riotMatchDto = RiotMatchDto.builder().gameId(gameId).build();
-            when(matchService.fetchLastMatchReferenceFromRiotApi(accountId)).thenReturn(RiotMatchReferenceDto.builder().gameId(gameId).timestamp(gameId).build());
+            when(matchService.fetchLastRankMatchReferenceFromRiotApi(accountId)).thenReturn(RiotMatchReferenceDto.builder().gameId(gameId).timestamp(gameId).build());
             when(matchService.fetchMatchFromRiotApi(gameId)).thenReturn(riotMatchDto);
             when(itemProcessor.process(riotMatchDto)).thenReturn(Match.builder().gameId(gameId).build());
         }

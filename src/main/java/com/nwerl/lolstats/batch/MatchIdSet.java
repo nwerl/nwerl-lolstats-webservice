@@ -27,4 +27,8 @@ public class MatchIdSet {
     public boolean noMatchesToUpdate() {
         return matchIdSet.isEmpty();
     }
+
+    public int getSize() {
+        return matchIdSet.size();
+    }
 }
