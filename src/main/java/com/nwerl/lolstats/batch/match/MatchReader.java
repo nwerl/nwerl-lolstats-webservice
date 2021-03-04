@@ -21,8 +21,9 @@ public class MatchReader implements ItemReader<RiotMatchDto> {
     public RiotMatchDto read() {
         if (matchIdSet.noMatchesToUpdate())
             return null;
-
+        log.info("matchIdSet size : {}", matchIdSet.getSize());
         Long nextMatchId = matchIdSet.getNextMatchId();
+
         RiotMatchDto nextMatchItem = matchService.fetchMatchFromRiotApi(nextMatchId);
 
         return nextMatchItem;
