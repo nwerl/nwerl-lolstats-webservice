@@ -4,6 +4,7 @@ import com.nwerl.lolstats.service.summoner.SummonerService;
 import com.nwerl.lolstats.web.domain.match.MatchListRepository;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
 import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.QueueType;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import com.nwerl.lolstats.web.dto.view.MatchDto;
 import com.nwerl.lolstats.web.dto.view.MatchListDto;
@@ -27,8 +28,12 @@ public class MatchService {
         return matchRepository.existsByGameId(gameId);
     }
 
-    public RiotMatchReferenceDto fetchLastMatchReferenceFromRiotApi(String accountId) {
-       RiotMatchReferenceDto dto = matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().get(0);
+    public RiotMatchReferenceDto fetchLastRankMatchReferenceFromRiotApi(String accountId) {
+       RiotMatchReferenceDto dto = matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().stream()
+               .filter(matchReference -> matchReference.getQueue().equals(QueueType.SOLO_RANK))
+               .filter(matchReference -> !existsByGameId(matchReference.getGameId()))
+               .findFirst().orElse(RiotMatchReferenceDto.builder().build());
+
        dto.setAccountId(accountId);
 
        return dto;
@@ -46,7 +51,7 @@ public class MatchService {
 
     public MatchDto getMatchById(String name, Long id) {
         String accountId = summonerService.findAccountIdByName(name);
-        return matchRepository.findById(id).get().of(accountId);
+        return matchRepository.findById(id).map(m -> m.of(accountId)).orElse(MatchDto.builder().build());
     }
 
     public List<MatchDto> getMatchesByName(String name) {

@@ -39,7 +39,7 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
     }
 
     private RiotMatchReferenceDto getLastMatchReference(String accountId) throws InterruptedException {
-        return matchService.fetchLastMatchReferenceFromRiotApi(accountId);
+        return matchService.fetchLastRankMatchReferenceFromRiotApi(accountId);
     }
 
     private Boolean leagueItemAccountIdQueueIsNotInitialized() {
