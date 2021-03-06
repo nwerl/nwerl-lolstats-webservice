@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.batch.league;
 
-import com.nwerl.lolstats.service.league.LeagueApiCaller;
 import com.nwerl.lolstats.service.league.LeagueService;
 import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ import java.util.Queue;
 @StepScope
 @Configuration
 public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
-    private final LeagueApiCaller leagueApiCaller;
+    private final LeagueService leagueService;
 
     private Queue<RiotLeagueItemDto> challengerLeagueItemQueue;
 
@@ -27,6 +26,9 @@ public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
     public RiotLeagueItemDto read() throws Exception{
         if(challengerLeagueItemQueueIsNotInitialized()) {
             this.challengerLeagueItemQueue = new LinkedList<>(fetchChallengerLeagueItemsFromRiotApi());
+
+            if(!challengerLeagueItemQueue.isEmpty())
+                leagueService.deleteAll();
         }
 
         RiotLeagueItemDto nextLeagueItem = challengerLeagueItemQueue.poll();
@@ -35,7 +37,7 @@ public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
     }
 
     private List<RiotLeagueItemDto> fetchChallengerLeagueItemsFromRiotApi() {
-        return leagueApiCaller.fetchChallengerLeagueListFromRiotApi().getEntries();
+        return leagueService.fetchChallengerLeagueListFromRiotApi().getEntries();
     }
 
     private Boolean challengerLeagueItemQueueIsNotInitialized() {
