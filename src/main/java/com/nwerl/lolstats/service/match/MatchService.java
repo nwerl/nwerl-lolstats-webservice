@@ -32,9 +32,8 @@ public class MatchService {
        RiotMatchReferenceDto dto = matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().stream()
                .filter(matchReference -> matchReference.getQueue().equals(QueueType.SOLO_RANK))
                .filter(matchReference -> !existsByGameId(matchReference.getGameId()))
-               .findFirst().orElse(RiotMatchReferenceDto.builder().build());
-
-       dto.setAccountId(accountId);
+               .findFirst().map(reference -> {reference.setAccountId(accountId); return reference;})
+               .orElse(null);
 
        return dto;
     }
@@ -44,9 +43,9 @@ public class MatchService {
     }
 
     public MatchListDto getMatchListByName(String name) {
-        String Id = summonerService.findAccountIdByName(name);
+        String id = summonerService.findAccountIdByName(name);
 
-        return matchListRepository.findByAccountId(Id, 0, 20).of();
+        return matchListRepository.findByAccountId(id).of();
     }
 
     public MatchDto getMatchById(String name, Long id) {
