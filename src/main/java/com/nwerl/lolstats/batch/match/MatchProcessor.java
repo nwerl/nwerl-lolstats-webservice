@@ -14,7 +14,6 @@ public class MatchProcessor implements ItemProcessor<RiotMatchDto, Match> {
 
     @Override
     public Match process(RiotMatchDto item) throws Exception {
-        //Thread.sleep(1400);
         return item.toEntity();
     }
 }
