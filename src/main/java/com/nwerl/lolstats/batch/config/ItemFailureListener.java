@@ -14,8 +14,11 @@ public class ItemFailureListener<I, O> extends ItemListenerSupport<I, O> {
     @Override
     public void onReadError(Exception ex) {
         if(ex instanceof HttpClientErrorException.TooManyRequests) {
-            log.info("429 Exception... wait for 2 minutes...");
+            log.info("Too Many Request... wait for 2 minutes...");
             Thread.sleep(riotApiCallLimit);
+        }
+        else if(ex instanceof HttpClientErrorException.Forbidden) {
+            log.info("Forbidden!!! Check your API Key or URI!!!");
         }
     }
 
