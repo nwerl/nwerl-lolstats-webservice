@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.web.domain.league;
 
-import com.mongodb.lang.Nullable;
 import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,13 +24,6 @@ public class LeagueItem {
     private Boolean inactive;
     private Boolean freshBlood;
     private Boolean hotStreak;
-
-    @Nullable
-    private String accountId;
-    @Nullable
-    private String recentMatchId;
-    @Nullable
-    private String recentMatchTime;
 
     public RiotLeagueItemDto of() {
         return RiotLeagueItemDto.builder()
