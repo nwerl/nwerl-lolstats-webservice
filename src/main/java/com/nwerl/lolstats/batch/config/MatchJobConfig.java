@@ -11,13 +11,13 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +25,14 @@ import org.springframework.web.client.HttpClientErrorException;
 public class MatchJobConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+
+    @Bean
+    public ExecutionContextPromotionListener promotionListener () {
+        ExecutionContextPromotionListener executionContextPromotionListener = new ExecutionContextPromotionListener();
+        executionContextPromotionListener.setKeys(new String[]{"GAME_ID"});
+
+        return executionContextPromotionListener;
+    }
 
     @Bean
     public Step matchListStep(ItemReader<RiotMatchReferenceDto> matchListReader,
@@ -35,9 +43,7 @@ public class MatchJobConfig {
                 .reader(matchListReader)
                 .processor(matchListProcessor)
                 .writer(matchListWriter)
-                .listener(new ItemFailureListener<RiotMatchReferenceDto, MatchList>().asItemProcessListener())
-                .faultTolerant()
-                .noRollback(HttpClientErrorException.TooManyRequests.class)
+                .listener(promotionListener())
                 .build();
     }
 
@@ -50,9 +56,7 @@ public class MatchJobConfig {
                 .reader(matchReader)
                 .processor(matchProcessor)
                 .writer(matchWriter)
-                .listener(new ItemFailureListener<RiotMatchDto, Match>().asItemProcessListener())
-                .faultTolerant()
-                .noRollback(HttpClientErrorException.TooManyRequests.class)
+                .listener(promotionListener())
                 .build();
     }
 
