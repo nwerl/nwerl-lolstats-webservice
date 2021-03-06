@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.batch;
 
-import com.nwerl.lolstats.service.league.LeagueService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -21,33 +20,32 @@ public class BatchApplication {
     private final JobLauncher jobLauncher;
     private final Job matchJob;
     private final Job leagueJob;
-
-    private final LeagueService leagueService;
+    private final LeagueItemAccountIdList leagueItemAccountIdList;
 
     @Autowired
     public BatchApplication(JobLauncher jobLauncher,
-                            LeagueService leagueService,
+                            LeagueItemAccountIdList leagueItemAccountIdList,
                             @Qualifier("matchJob") Job matchJob,
                             @Qualifier("leagueJob") Job leagueJob) {
         this.jobLauncher = jobLauncher;
-        this.leagueService = leagueService;
+        this.leagueItemAccountIdList = leagueItemAccountIdList;
         this.matchJob = matchJob;
         this.leagueJob = leagueJob;
     }
 
-    @Scheduled(fixedDelay = 3600000)
+    @Scheduled(cron = "0 0 * * * *")
     public void leagueLaunch() throws Exception {
         log.info("Job Started at : {}", new Date());
-
-        leagueService.deleteAll();
 
         JobParameters param = new JobParametersBuilder()
                 .addString("dateTime", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
         JobExecution execution = jobLauncher.run(leagueJob, param);
+
+        leagueItemAccountIdList.update();
     }
 
-    @Scheduled(fixedRateString = "1400", initialDelay = 5000)
+    @Scheduled(fixedDelay = 100)
     public void matchLaunch() throws Exception {
         log.info("Job Started at : {}", new Date());
 
