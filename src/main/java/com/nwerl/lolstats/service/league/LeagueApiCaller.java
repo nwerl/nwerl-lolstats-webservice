@@ -1,7 +1,13 @@
 package com.nwerl.lolstats.service.league;
 
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueListDto;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.web.client.HttpServerErrorException;
 
+@Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 public interface LeagueApiCaller {
-    LeagueListDto callApiChallengerLeagueItem();
+    public static final String challengerLeagueUri = "/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5";
+
+
+    RiotLeagueListDto fetchChallengerLeagueListFromRiotApi();
 }

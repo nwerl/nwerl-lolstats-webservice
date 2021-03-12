@@ -3,8 +3,7 @@ package com.nwerl.lolstats.service;
 import com.nwerl.lolstats.service.datadragon.DataDragonApiCaller;
 import com.nwerl.lolstats.service.datadragon.DataDragonService;
 import com.nwerl.lolstats.service.summoner.SummonerApiCaller;
-import com.nwerl.lolstats.service.summoner.SummonerService;
-import com.nwerl.lolstats.web.dto.riotApi.summoner.SummonerDto;
+import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,8 @@ public class ConnectToRiotApiTest {
     @Test
     public void connect_to_Riot_Api() {
         String name = "Vehumet";
-        SummonerDto summonerDto = summonerApiCaller.callApiSummonerInfoByName(name);
-        assertThat(name, is(summonerDto.getName()));
+        RiotSummonerDto riotSummonerDto = summonerApiCaller.fetchSummonerFromRiotApiByName(name);
+        assertThat(name, is(riotSummonerDto.getName()));
     }
 
     @Test

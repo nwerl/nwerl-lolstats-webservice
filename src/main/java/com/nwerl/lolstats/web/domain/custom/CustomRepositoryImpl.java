@@ -16,7 +16,7 @@ public class CustomRepositoryImpl implements CustomRepository {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public void customMethod(String accountId, MatchReference matchReference) {
+    public void matchListFindAndModify(String accountId, MatchReference matchReference) {
         Query query = new Query(Criteria.where("_id").is(accountId));
         Update update = new Update().addToSet("matchReferences", matchReference);
 

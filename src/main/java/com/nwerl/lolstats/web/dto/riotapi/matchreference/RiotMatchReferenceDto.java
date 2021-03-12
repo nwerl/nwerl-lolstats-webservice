@@ -1,4 +1,4 @@
-package com.nwerl.lolstats.web.dto.riotApi.matchreference;
+package com.nwerl.lolstats.web.dto.riotapi.matchreference;
 
 import lombok.*;
 
@@ -16,4 +16,6 @@ public class RiotMatchReferenceDto {
     private Integer queue;
     private String lane;
     private Long timestamp;
+
+    private String accountId;
 }

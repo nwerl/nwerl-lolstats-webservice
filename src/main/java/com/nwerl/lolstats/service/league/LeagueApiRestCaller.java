@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.service.league;
 
-import com.nwerl.lolstats.web.dto.riotApi.league.LeagueListDto;
+import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueListDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -8,12 +8,10 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.netty.http.server.HttpServer;
 
 import java.time.Duration;
 
@@ -22,7 +20,7 @@ import java.time.Duration;
 @Component
 public class LeagueApiRestCaller implements LeagueApiCaller{
     private final RestTemplate restTemplate;
-    private static final String challengerLeagueUri = "/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5";
+
 
     public LeagueApiRestCaller(RestTemplateBuilder restTemplateBuilder,
                                @Value("${apikey}") String apiKey,
@@ -39,9 +37,9 @@ public class LeagueApiRestCaller implements LeagueApiCaller{
                         .scheme(scheme).host(hostname).path("lol").queryParam("api_key", apiKey)));
     }
 
-    public LeagueListDto callApiChallengerLeagueItem() {
-        log.info("Call RiotApi to Get ChallengerLeagueItem");
+    public RiotLeagueListDto fetchChallengerLeagueListFromRiotApi() {
+        log.info("Call RiotApi to Get ChallengerLeagueList");
 
-        return restTemplate.getForObject(challengerLeagueUri, LeagueListDto.class);
+        return restTemplate.getForObject(challengerLeagueUri, RiotLeagueListDto.class);
     }
 }

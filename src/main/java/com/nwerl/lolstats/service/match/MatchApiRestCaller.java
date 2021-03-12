@@ -1,8 +1,7 @@
 package com.nwerl.lolstats.service.match;
 
-import com.nwerl.lolstats.web.dto.riotApi.match.RiotMatchDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchListDto;
-import com.nwerl.lolstats.web.dto.riotApi.matchreference.RiotMatchReferenceDto;
+import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchListDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -23,6 +22,7 @@ import java.time.Duration;
 public class MatchApiRestCaller implements MatchApiCaller{
     private final RestTemplate restTemplate;
 
+
     public MatchApiRestCaller(RestTemplateBuilder restTemplateBuilder,
                               @Value("${apikey}") String apiKey,
                               @Value("${riotgames.protocol}") String scheme,
@@ -38,18 +38,15 @@ public class MatchApiRestCaller implements MatchApiCaller{
                         .scheme(scheme).host(hostname).path("lol").queryParam("api_key", apiKey)));
     }
 
-    public RiotMatchReferenceDto callApiLastMatchReference(String accountId) {
+    public RiotMatchListDto fetchMatchListFromRiotApi(String accountId) {
         log.info("Call RiotApi to Get MatchReferences");
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/match/v4/matchlists/by-account/").path(accountId).queryParam("endIndex", "1")
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotMatchListDto.class).getMatches().get(0);
+
+        return restTemplate.getForObject(String.format(matchListUri, accountId), RiotMatchListDto.class);
     }
 
-    public RiotMatchDto callApiMatchByGameId(Long gameId) {
-        String uri = UriComponentsBuilder.newInstance()
-                .path("/match/v4/matches/").path(String.valueOf(gameId))
-                .build().toString();
-        return restTemplate.getForObject(uri, RiotMatchDto.class);
+    public RiotMatchDto fetchMatchFromRiotApi(Long gameId) {
+        log.info("Call RiotApi to Get Match {}", gameId);
+
+        return restTemplate.getForObject(String.format(matchUri, String.valueOf(gameId)), RiotMatchDto.class);
     }
 }
