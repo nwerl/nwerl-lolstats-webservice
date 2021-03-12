@@ -3,7 +3,6 @@ package com.nwerl.lolstats.web.domain.match;
 import com.nwerl.lolstats.web.dto.view.MatchDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -98,7 +97,7 @@ public class Match {
     }
 
     public MatchDto of(String accountId) {
-        Player owner = this.players.stream().filter(p -> p.accountId.equals(accountId)).findFirst().get();
+        Player owner = this.players.stream().filter(p -> p.accountId.equals(accountId)).findFirst().orElse(Player.builder().build());
         return MatchDto.builder()
                 .gameCreation(gameCreation)
                 .gameDuration(gameDuration)

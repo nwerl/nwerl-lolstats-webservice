@@ -1,8 +1,7 @@
 package com.nwerl.lolstats.web;
 
-import com.nwerl.lolstats.service.LeagueService;
-import com.nwerl.lolstats.service.MatchService;
-import com.nwerl.lolstats.service.SummonerService;
+import com.nwerl.lolstats.service.league.LeagueService;
+import com.nwerl.lolstats.service.match.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
