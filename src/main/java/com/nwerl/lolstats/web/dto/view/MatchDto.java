@@ -1,16 +1,17 @@
 package com.nwerl.lolstats.web.dto.view;
 
-import com.nwerl.lolstats.web.domain.match.Match;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
 @Builder
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class MatchDto {
     @Id
     private Long gameId;
@@ -28,6 +29,7 @@ public class MatchDto {
     private List<PlayerDto> players;
 
     @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     @Getter
     public static class PlayerDto {
