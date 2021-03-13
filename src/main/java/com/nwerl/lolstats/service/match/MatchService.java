@@ -10,6 +10,7 @@ import com.nwerl.lolstats.web.dto.view.MatchDto;
 import com.nwerl.lolstats.web.dto.view.MatchListDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class MatchService {
         return matchRepository.findById(id).map(m -> m.of(accountId)).orElse(MatchDto.builder().build());
     }
 
+    @Cacheable(value = "match", key = "#name")
     public List<MatchDto> getMatchesByName(String name) {
 
         List<MatchListDto.MatchReferenceDto> matchReferences = getMatchListByName(name).getMatchReferences();

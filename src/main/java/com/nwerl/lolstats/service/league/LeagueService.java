@@ -7,6 +7,7 @@ import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueListDto;
 import com.nwerl.lolstats.web.dto.view.LeagueRankingDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class LeagueService {
     }
 
 
+    @Cacheable(value = "ranking")
     public List<LeagueRankingDto> getLeagueRanking() {
         AtomicInteger ranking = new AtomicInteger(1);
 
