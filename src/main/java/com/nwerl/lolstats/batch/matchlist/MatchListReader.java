@@ -1,6 +1,5 @@
 package com.nwerl.lolstats.batch.matchlist;
 
-import com.nwerl.lolstats.batch.LeagueItemAccountIdList;
 import com.nwerl.lolstats.service.match.MatchService;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -20,21 +20,24 @@ import org.springframework.web.client.HttpClientErrorException;
 @Component
 public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
     private final MatchService matchService;
-    private final LeagueItemAccountIdList leagueItemAccountIdList;
+
+    @Value("#{jobParameters['accountId']}")
+    private String accountId;
     private StepExecution stepExecution;
 
-    private String accountId;
+    private static final String THIS_ACCOUNT_ID_IS_UPDATED = "";
 
     @Override
     public RiotMatchReferenceDto read() throws InterruptedException {
         if(thisAccountIdIsUpdated())
             return null;
 
-        accountId = leagueItemAccountIdList.getNextAccountId();
         RiotMatchReferenceDto matchReference = getLastMatchReference(accountId);
 
         if(matchReference == null)
             stepExecution.setExitStatus(ExitStatus.FAILED);
+
+        accountId = THIS_ACCOUNT_ID_IS_UPDATED;
 
         return matchReference;
     }
@@ -49,7 +52,7 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
     }
 
     private Boolean thisAccountIdIsUpdated() {
-        return accountId != null;
+        return accountId.trim().isEmpty();
     }
 
     @BeforeStep
