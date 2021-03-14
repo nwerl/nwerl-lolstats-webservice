@@ -31,7 +31,7 @@ public class MatchService {
 
     public RiotMatchReferenceDto fetchLastRankMatchReferenceFromRiotApi(String accountId) {
        RiotMatchReferenceDto dto = matchApiCaller.fetchMatchListFromRiotApi(accountId).getMatches().stream()
-               .filter(matchReference -> matchReference.getQueue().equals(QueueType.SOLO_RANK))
+               .filter(matchReference -> matchReference.getQueue() == QueueType.SOLO_RANK.getQueueCode())
                .filter(matchReference -> !existsByGameId(matchReference.getGameId()))
                .findFirst().map(reference -> {reference.setAccountId(accountId); return reference;})
                .orElse(null);
