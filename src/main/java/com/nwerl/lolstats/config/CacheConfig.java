@@ -12,10 +12,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-
 @RequiredArgsConstructor
 @EnableCaching
 @Configuration
@@ -29,20 +25,9 @@ public class CacheConfig {
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-        RedisCacheConfiguration rankingConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofMillis(ONE_HOUR));
-
-        Map<String, RedisCacheConfiguration> configurationMap = new HashMap<>();
-        configurationMap.put("ranking", rankingConfiguration);
-
-        RedisCacheManager redisCacheManager = RedisCacheManager.RedisCacheManagerBuilder
+        return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(connectionFactory)
                 .cacheDefaults(defaultConfiguration)
-                .withInitialCacheConfigurations(configurationMap)
                 .build();
-
-        return redisCacheManager;
     }
 }
