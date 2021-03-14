@@ -36,7 +36,7 @@ public class BatchApplication {
     }
 
 
-    @Scheduled (fixedDelay= Long.MAX_VALUE)
+    @Scheduled (fixedDelay = Long.MAX_VALUE)
     public void initLeagueList() throws Exception {
         leagueLaunch();
     }
