@@ -28,9 +28,6 @@ public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
     public RiotLeagueItemDto read() throws Exception{
         if(challengerLeagueItemQueueIsNotInitialized()) {
             this.challengerLeagueItemQueue = new LinkedList<>(fetchChallengerLeagueItemsFromRiotApi());
-
-            if(!challengerLeagueItemQueue.isEmpty())
-                leagueService.deleteAll();
         }
 
         RiotLeagueItemDto nextLeagueItem = challengerLeagueItemQueue.poll();
