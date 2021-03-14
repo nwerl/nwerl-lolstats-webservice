@@ -7,8 +7,8 @@ import org.springframework.web.client.HttpServerErrorException;
 
 @Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 public interface MatchApiCaller {
-    public static final String matchListUri = "/match/v4/matchlists/by-account/%s";
-    public static final String matchUri = "/match/v4/matches/%s";
+    public static final String MATCH_LIST_URI = "/match/v4/matchlists/by-account/%s";
+    public static final String MATCH_URI = "/match/v4/matches/%s";
 
     RiotMatchListDto fetchMatchListFromRiotApi(String accountId);
     RiotMatchDto fetchMatchFromRiotApi(Long gameId);

@@ -8,9 +8,9 @@ import java.util.Map;
 
 @Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 public interface DataDragonApiCaller {
-    public static final String lolVersionUri = "/api/versions.json";
-    public static final String listApiUri = "/cdn/%s/data/ko_KR/%s.json";
-    public static final String imageApiUri = "/cdn%s/img%s/%s.png";
+    public static final String LOL_VERSION_URI = "/api/versions.json";
+    public static final String IMAGE_LIST_URI = "/cdn/%s/data/ko_KR/%s.json";
+    public static final String IMAGE_URI = "/cdn%s/img%s/%s.png";
 
     String callApiCurrentLOLVersion();
 
