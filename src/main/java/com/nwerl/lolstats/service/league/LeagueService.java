@@ -30,6 +30,10 @@ public class LeagueService {
         leagueItemRepository.deleteAll();
     }
 
+    public void deleteBySummonerId(String summonerId) {
+        leagueItemRepository.deleteBySummonerId(summonerId);
+    }
+
     //ChallengerLeagueList를 갱신함.
     public RiotLeagueListDto updateChallengerLeagueList() {
         List<RiotLeagueItemDto> list = leagueApiCaller.fetchChallengerLeagueListFromRiotApi().getEntries();
