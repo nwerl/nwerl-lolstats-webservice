@@ -9,8 +9,8 @@ import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +18,8 @@ import org.springframework.web.client.HttpClientErrorException;
 @Component
 public class MatchReader implements ItemReader<RiotMatchDto> {
     private final MatchService matchService;
+    private final RetryTemplate retryTemplate;
+
     private StepExecution stepExecution;
 
     private Long gameId;
@@ -43,13 +45,7 @@ public class MatchReader implements ItemReader<RiotMatchDto> {
     }
 
     public RiotMatchDto fetchMatchFromRiotApi(Long gameId) throws InterruptedException {
-        try {
-            return matchService.fetchMatchFromRiotApi(gameId);
-        } catch (HttpClientErrorException.TooManyRequests e){
-            Thread.sleep(120000 + 20000);
-            return matchService.fetchMatchFromRiotApi(gameId);
-        }
-
+        return retryTemplate.execute(arg -> matchService.fetchMatchFromRiotApi(gameId));
     }
 
     @BeforeStep

@@ -10,8 +10,8 @@ import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 
 @Slf4j
@@ -19,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @StepScope
 @Component
 public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
+    private final RetryTemplate retryTemplate;
     private final MatchService matchService;
 
     @Value("#{jobParameters['accountId']}")
@@ -42,13 +43,9 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
         return matchReference;
     }
 
+
     private RiotMatchReferenceDto getLastMatchReference(String accountId) throws InterruptedException {
-        try {
-            return matchService.fetchLastRankMatchReferenceFromRiotApi(accountId);
-        } catch (HttpClientErrorException.TooManyRequests e) {
-            Thread.sleep(120000 + 20000);
-            return matchService.fetchLastRankMatchReferenceFromRiotApi(accountId);
-        }
+        return retryTemplate.execute(arg -> matchService.fetchLastRankMatchReferenceFromRiotApi(accountId));
     }
 
     private Boolean thisAccountIdIsUpdated() {

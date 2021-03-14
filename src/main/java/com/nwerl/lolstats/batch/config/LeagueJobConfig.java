@@ -17,7 +17,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,9 +34,6 @@ public class LeagueJobConfig {
                 .reader(leagueReader)
                 .processor(leagueProcessor)
                 .writer(leagueWriter)
-                .listener(new ItemFailureListener<RiotLeagueItemDto, LeagueItem>().asItemProcessListener())
-                .faultTolerant()
-                .noRollback(HttpClientErrorException.TooManyRequests.class)
                 .build();
     }
 
@@ -51,9 +47,6 @@ public class LeagueJobConfig {
                 .reader(summonerReader)
                 .processor(summonerProcessor)
                 .writer(summonerWriter)
-                .listener(new ItemFailureListener<RiotSummonerDto, Summoner>().asItemProcessListener())
-                .faultTolerant()
-                .noRollback(HttpClientErrorException.TooManyRequests.class)
                 .build();
     }
 

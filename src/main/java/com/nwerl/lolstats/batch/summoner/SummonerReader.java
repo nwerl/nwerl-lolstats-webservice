@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,17 +23,21 @@ import java.util.Queue;
 @Configuration
 public class SummonerReader implements ItemReader<RiotSummonerDto> {
     private final SummonerService summonerService;
+    private final RetryTemplate retryTemplate;
 
     private Queue<String> summonerQueue;
 
     public SummonerReader(LeagueService leagueService,
-                          SummonerService summonerService) {
+                          SummonerService summonerService,
+                          RetryTemplate retryTemplate) {
         this.summonerService = summonerService;
         this.summonerQueue = new LinkedList<>();
+        this.retryTemplate = retryTemplate;
 
         setSummonerQueue(leagueService);
     }
 
+    @Retryable(include = HttpClientErrorException.TooManyRequests.class, maxAttempts = 2, backoff = @Backoff(delay = 120000 + 20000))
     @Override
     public RiotSummonerDto read() throws Exception{
         String nextSummonerId = summonerQueue.poll();
@@ -38,7 +46,7 @@ public class SummonerReader implements ItemReader<RiotSummonerDto> {
             return null;
 
 
-        return summonerService.fetchSummonerFromRiotApiById(nextSummonerId);
+        return retryTemplate.execute(args-> summonerService.fetchSummonerFromRiotApiById(nextSummonerId));
     }
 
     private void setSummonerQueue(LeagueService leagueService) {
