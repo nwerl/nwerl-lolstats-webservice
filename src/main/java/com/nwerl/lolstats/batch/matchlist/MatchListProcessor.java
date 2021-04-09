@@ -22,7 +22,9 @@ import java.util.Collections;
 @Component
 public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, MatchList> {
     private final MatchService matchService;
+
     private StepExecution stepExecution;
+
 
     @Override
     public MatchList process(RiotMatchReferenceDto item) throws Exception {
@@ -30,11 +32,12 @@ public class MatchListProcessor implements ItemProcessor<RiotMatchReferenceDto, 
 
         if(!matchService.existsByGameId(gameId)) {
             log.info("{}'s GAME {} NOT EXISTS IN DB", item.getAccountId(), gameId);
-            stepExecution.getJobExecution().getExecutionContext().put("GAME_ID", gameId);
         }
         else {
             stepExecution.setExitStatus(ExitStatus.FAILED);
         }
+
+        stepExecution.getJobExecution().getExecutionContext().put("GAME_ID", gameId);
 
         return MatchList.builder().accountId(item.getAccountId()).matchReferences(Collections.singletonList(new MatchReference(gameId, item.getTimestamp()))).build();
     }
