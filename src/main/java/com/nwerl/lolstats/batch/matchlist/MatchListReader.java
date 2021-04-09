@@ -26,11 +26,11 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
     private String accountId;
     private StepExecution stepExecution;
 
-    private static final String THIS_ACCOUNT_ID_IS_UPDATED = "";
+    private Boolean THIS_ACCOUNT_ID_IS_UPDATED = false;
 
     @Override
     public RiotMatchReferenceDto read() throws InterruptedException {
-        if(thisAccountIdIsUpdated())
+        if(THIS_ACCOUNT_ID_IS_UPDATED)
             return null;
 
         RiotMatchReferenceDto matchReference = getLastMatchReference(accountId);
@@ -38,7 +38,7 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
         if(matchReference == null)
             stepExecution.setExitStatus(ExitStatus.FAILED);
 
-        accountId = THIS_ACCOUNT_ID_IS_UPDATED;
+        THIS_ACCOUNT_ID_IS_UPDATED = true;
 
         return matchReference;
     }
@@ -46,10 +46,6 @@ public class MatchListReader implements ItemReader<RiotMatchReferenceDto> {
 
     private RiotMatchReferenceDto getLastMatchReference(String accountId) throws InterruptedException {
         return retryTemplate.execute(arg -> matchService.fetchLastRankMatchReferenceFromRiotApi(accountId));
-    }
-
-    private Boolean thisAccountIdIsUpdated() {
-        return accountId.trim().isEmpty();
     }
 
     @BeforeStep
