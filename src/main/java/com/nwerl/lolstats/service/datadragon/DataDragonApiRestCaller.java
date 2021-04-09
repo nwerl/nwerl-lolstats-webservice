@@ -1,9 +1,6 @@
 package com.nwerl.lolstats.service.datadragon;
 
-import com.nwerl.lolstats.web.dto.riotapi.datadragon.DataDragonChampionListDto;
-import com.nwerl.lolstats.web.dto.riotapi.datadragon.DataDragonItemListDto;
-import com.nwerl.lolstats.web.dto.riotapi.datadragon.DataDragonRuneListDto;
-import com.nwerl.lolstats.web.dto.riotapi.datadragon.DataDragonSpellListDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,7 +18,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,38 +53,40 @@ public class DataDragonApiRestCaller implements DataDragonApiCaller {
         return version;
     }
 
-    public Map<Long, String> callChampionListApi(String jsonName) {
+    public List<ChampionDto> callChampionListApi(String jsonName) {
         return Optional.ofNullable(restTemplate.getForObject(String.format(IMAGE_LIST_URI, version, jsonName), DataDragonChampionListDto.class))
-                .map(DataDragonChampionListDto::toMap)
-                .orElse(Collections.emptyMap());
-    }
-
-    public List<String> callItemListApi(String jsonName) {
-        return Optional.ofNullable(restTemplate.getForObject(String.format(IMAGE_LIST_URI, version, jsonName), DataDragonItemListDto.class))
-                .map(DataDragonItemListDto::toList)
+                .map(DataDragonChampionListDto::toChampionDtoList)
                 .orElse(Collections.emptyList());
     }
 
-    public Map<Long, String> callRuneStyleListApi(String jsonName) {
+    public List<ItemDto> callItemListApi(String jsonName) {
+        return Optional.ofNullable(restTemplate.getForObject(String.format(IMAGE_LIST_URI, version, jsonName), DataDragonItemListDto.class))
+                .map(DataDragonItemListDto::toItemDtoList)
+                .orElse(Collections.emptyList());
+    }
+
+    public List<RuneDto> callRuneStyleListApi(String jsonName) {
         return Optional.ofNullable(restTemplate.exchange(String.format(IMAGE_LIST_URI, version, jsonName), HttpMethod.GET, null, new ParameterizedTypeReference<List<DataDragonRuneListDto>>(){}).getBody())
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
-                .collect(Collectors.toMap(DataDragonRuneListDto::getId, DataDragonRuneListDto::getIcon));
+                .map(r -> new RuneDto(r.getId(), r.getIcon()))
+                .collect(Collectors.toList());
     }
 
-    public Map<Long, String> callRuneListApi(String jsonName) {
+    public List<RuneDto> callRuneListApi(String jsonName) {
         return Optional.ofNullable(restTemplate.exchange(String.format(IMAGE_LIST_URI, version, jsonName), HttpMethod.GET, null, new ParameterizedTypeReference<List<DataDragonRuneListDto>>(){}).getBody())
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .flatMap(runeList -> runeList.getSlots().stream())
                 .flatMap(slot -> slot.getRunes().stream())
-                .collect(Collectors.toMap(DataDragonRuneListDto.RiotSlotsDto.RiotRunesDto::getId, DataDragonRuneListDto.RiotSlotsDto.RiotRunesDto::getIcon));
+                .map(r -> new RuneDto(r.getId(), r.getIcon()))
+                .collect(Collectors.toList());
     }
 
-    public Map<Long, String> callSpellListApi(String jsonName) {
+    public List<SpellDto> callSpellListApi(String jsonName) {
         return Optional.ofNullable(restTemplate.getForObject(String.format(IMAGE_LIST_URI, version, jsonName), DataDragonSpellListDto.class))
-                .map(DataDragonSpellListDto::toMap)
-                .orElse(Collections.emptyMap());
+                .map(DataDragonSpellListDto::toSpellDtoList)
+                .orElse(Collections.emptyList());
     }
 
     public byte[] callImgApi(String path, String imgName) {

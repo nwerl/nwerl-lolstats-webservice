@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -12,17 +13,9 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class DataDragonChampionListDto {
-    private Map<String, RiotChampionDto> data;
+    private Map<String, ChampionDto> data;
 
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    public static class RiotChampionDto {
-        private String id;
-        private Long key;
-    }
-
-    public Map<Long, String> toMap() {
-        return data.values().stream().collect(Collectors.toMap(RiotChampionDto::getKey, RiotChampionDto::getId));
+    public List<ChampionDto> toChampionDtoList() {
+        return data.values().stream().map(c -> new ChampionDto(c.getId(), c.getKey())).collect(Collectors.toList());
     }
 }

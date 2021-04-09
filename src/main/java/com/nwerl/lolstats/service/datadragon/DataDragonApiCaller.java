@@ -1,12 +1,13 @@
 package com.nwerl.lolstats.service.datadragon;
 
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.web.client.HttpServerErrorException;
+
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.ChampionDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.ItemDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.RuneDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.SpellDto;
 
 import java.util.List;
-import java.util.Map;
 
-@Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 public interface DataDragonApiCaller {
     public static final String LOL_VERSION_URI = "/api/versions.json";
     public static final String IMAGE_LIST_URI = "/cdn/%s/data/ko_KR/%s.json";
@@ -15,9 +16,9 @@ public interface DataDragonApiCaller {
     String callApiCurrentLOLVersion();
 
     byte[] callImgApi(String assetName, String imgName);
-    Map<Long, String> callChampionListApi(String jsonName);
-    List<String> callItemListApi(String jsonName);
-    Map<Long, String> callRuneStyleListApi(String jsonName);
-    Map<Long, String> callRuneListApi(String jsonName);
-    Map<Long, String> callSpellListApi(String jsonName);
+    List<ChampionDto> callChampionListApi(String jsonName);
+    List<ItemDto> callItemListApi(String jsonName);
+    List<RuneDto> callRuneStyleListApi(String jsonName);
+    List<RuneDto> callRuneListApi(String jsonName);
+    List<SpellDto> callSpellListApi(String jsonName);
 }

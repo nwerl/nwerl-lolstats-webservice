@@ -1,6 +1,10 @@
 package com.nwerl.lolstats.service.datadragon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.ChampionDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.ItemDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.RuneDto;
+import com.nwerl.lolstats.web.dto.riotapi.datadragon.SpellDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -32,13 +36,13 @@ public class DataDragonService {
         log.info("Update Champions started");
 
         DataDragonPath paths = DataDragonPath.CHAMPION;
-        Map<Long, String> champions = dataDragonApiCaller.callChampionListApi(paths.getJsonName());
+        List<ChampionDto> champions = dataDragonApiCaller.callChampionListApi(paths.getJsonName());
 
-        for(Map.Entry<Long, String> champion : champions.entrySet()) {
+        for(ChampionDto champion : champions) {
             Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+champion.getKey()+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imageBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), champion.getValue());
+            byte[] imageBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), champion.getId());
             Files.write(filePath, imageBytes);
         }
 
@@ -50,13 +54,13 @@ public class DataDragonService {
 
         DataDragonPath paths = DataDragonPath.ITEM;
 
-        List<String> items = dataDragonApiCaller.callItemListApi(paths.getJsonName());
+        List<ItemDto> items = dataDragonApiCaller.callItemListApi(paths.getJsonName());
 
-        for(String itemId : items) {
-            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+itemId+".png");
+        for(ItemDto item : items) {
+            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+item.getId()+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), itemId);
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), item.getId());
             Files.write(filePath, imgBytes);
         }
 
@@ -68,13 +72,13 @@ public class DataDragonService {
 
         DataDragonPath paths = DataDragonPath.SPELL;
 
-        Map<Long, String> spells = dataDragonApiCaller.callSpellListApi(paths.getJsonName());
+        List<SpellDto> spells = dataDragonApiCaller.callSpellListApi(paths.getJsonName());
 
-        for(Map.Entry<Long, String> spell : spells.entrySet()) {
+        for(SpellDto spell : spells) {
             Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+spell.getKey()+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), spell.getValue());
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), spell.getId());
             Files.write(filePath, imgBytes);
         }
 
@@ -86,13 +90,13 @@ public class DataDragonService {
 
         DataDragonPath paths = DataDragonPath.RUNE_STYLE;
 
-        Map<Long, String> runeStyles = dataDragonApiCaller.callRuneStyleListApi(paths.getJsonName());
+        List<RuneDto> runeStyles = dataDragonApiCaller.callRuneStyleListApi(paths.getJsonName());
 
-        for(Map.Entry<Long, String> runeStyle : runeStyles.entrySet()) {
-            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+runeStyle.getKey()+".png");
+        for(RuneDto runeStyle : runeStyles) {
+            Path filePath = Paths.get(basePath+"/"+paths.getFolderName()+"/"+runeStyle.getId()+".png");
             if(Files.exists(filePath))  continue;
 
-            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), runeStyle.getValue());
+            byte[] imgBytes = dataDragonApiCaller.callImgApi(paths.getApiPath(), runeStyle.getIcon());
             Files.write(filePath, imgBytes);
         }
 
@@ -104,15 +108,15 @@ public class DataDragonService {
 
         DataDragonPath paths = DataDragonPath.RUNE;
 
-        Map<Long, String> runes = dataDragonApiCaller.callRuneListApi(paths.getJsonName());
+        List<RuneDto> runes = dataDragonApiCaller.callRuneListApi(paths.getJsonName());
 
-        for(Map.Entry<Long, String> rune : runes.entrySet()) {
-            Path path = Paths.get(basePath+"/"+paths.getFolderName()+"/"+rune.getKey()+".png");
+        for(RuneDto rune : runes) {
+            Path path = Paths.get(basePath+"/"+paths.getFolderName()+"/"+rune.getId()+".png");
             if(Files.exists(path))  continue;
 
 
             //imgPath e.g., perk-images/Styles/Domination/Electrocute/Electrocute.png
-            String imgPath = rune.getValue();
+            String imgPath = rune.getIcon();
             String apiPath = "/" + imgPath.substring(0, imgPath.lastIndexOf("/")+1);
             String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1, imgPath.lastIndexOf("."));
 

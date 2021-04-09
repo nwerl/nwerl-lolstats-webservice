@@ -1,5 +1,6 @@
 package com.nwerl.lolstats.service;
 
+import com.nwerl.lolstats.batch.BatchApplication;
 import com.nwerl.lolstats.service.datadragon.DataDragonApiCaller;
 import com.nwerl.lolstats.service.datadragon.DataDragonService;
 import com.nwerl.lolstats.service.league.LeagueApiCaller;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -16,6 +18,7 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(SpringRunner.class)
+@MockBean(BatchApplication.class)
 @SpringBootTest
 public class ConnectToRiotApiTest {
     @Autowired
