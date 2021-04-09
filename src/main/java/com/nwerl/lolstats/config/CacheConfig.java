@@ -17,7 +17,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class CacheConfig {
     private final RedisConnectionFactory connectionFactory;
-    private static final int ONE_HOUR = 3600000;
+    private static final int ONE_HOUR = 60 * 60 * 1000;
 
     @Bean
     public CacheManager redisCacheManager() {
