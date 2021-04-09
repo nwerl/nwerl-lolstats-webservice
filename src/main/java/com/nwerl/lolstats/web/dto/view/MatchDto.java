@@ -6,13 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class MatchDto {
+public class MatchDto implements Serializable {
+    private static final long serialVersionUID = -2126020521780472596L;
+
     @Id
     private Long gameId;
 
@@ -32,7 +35,9 @@ public class MatchDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class PlayerDto {
+    public static class PlayerDto implements Serializable {
+        private static final long serialVersionUID = 5859870759665104243L;
+
         @Id
         private String accountId;
         private String summonerName;
