@@ -26,7 +26,7 @@ public class BatchJobLauncher {
     private final JobLauncher jobLauncher;
 
 
-    @CacheEvict(value = "ranking", allEntries = true)
+    @CacheEvict(value = "ranking")
     public void leagueLaunch() throws Exception {
         log.info("Job Started at : {}", new Date());
 
@@ -36,7 +36,6 @@ public class BatchJobLauncher {
         JobExecution execution = jobLauncher.run(leagueJob, param);
     }
 
-    @CacheEvict(value = "match", key = "#summonerName")
     public void matchLaunch(String summonerName, String accountId) throws Exception {
         log.info("Job Started at : {}", new Date());
 
