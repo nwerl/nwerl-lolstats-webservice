@@ -15,8 +15,7 @@ public class LeagueListRemoverTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        leagueService.findAll().    getEntries()
-                .forEach(dto -> leagueService.deleteBySummonerId(dto.getSummonerId()));
+        leagueService.updateLeagueRanking();
 
         return RepeatStatus.FINISHED;
     }
