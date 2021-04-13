@@ -21,15 +21,15 @@ public class SummonerService {
         return summonerRepository.findByName(name).getAccountId();
     }
 
-    public String findAccountIdById(String id) {
-        return summonerRepository.findById(id).map(Summoner::getAccountId).orElse("");
+    public String findAccountIdBySummonerId(String id) {
+        return summonerRepository.findBySummonerId(id).map(Summoner::getAccountId).orElse("");
     }
 
     public List<String> findAccountIdListByIdList(List<String> summonerIdList) {
         List<String> accountIdList = new ArrayList<>();
 
         for(String id : summonerIdList) {
-            accountIdList.add(findAccountIdById(id));
+            accountIdList.add(findAccountIdBySummonerId(id));
         }
 
         return accountIdList;
@@ -44,11 +44,11 @@ public class SummonerService {
     }
 
     public Boolean checkByName(String name, String summonerId) {
-        if(!summonerRepository.existsById(summonerId)) {
+        if(!summonerRepository.existsBySummonerId(summonerId)) {
             return false;
         }
         else {
-            Summoner summoner = summonerRepository.findById(summonerId).get();
+            Summoner summoner = summonerRepository.findBySummonerId(summonerId).get();
             if (!summoner.getName().equals(name)) {
                 //닉네임 변경 시
                 summoner.modifyName(name);
