@@ -1,11 +1,10 @@
 package com.nwerl.lolstats.web.domain.match;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface MatchRepository extends MongoRepository<Match, Long> {
+public interface MatchRepository extends JpaRepository<Match, Long> {
     //public Match findTopByParticipantIdentities_Player_AccountId(String accountId);
-    public Boolean existsByGameId(Long gameId);
     public Optional<Match> findById(Long id);
 }

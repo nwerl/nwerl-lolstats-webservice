@@ -1,16 +1,33 @@
 package com.nwerl.lolstats.web.domain.match;
 
 
-import lombok.AllArgsConstructor;
+import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
 
-@Builder
-@AllArgsConstructor
+import javax.persistence.*;
+
 @Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "match_reference")
 public class MatchReference {
     @Id
-    private Long gameId;
-    private Long timeStamp;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id", referencedColumnName = "accountId")
+    private Summoner summoner;
+
+    @ManyToOne
+    @JoinColumn(name = "match_id")
+    private Match match;
+
+    @Builder
+    public MatchReference(Summoner summoner, Match match) {
+        this.summoner = summoner;
+        this.match = match;
+    }
 }
