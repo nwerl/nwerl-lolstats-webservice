@@ -40,9 +40,9 @@ public class LeagueItemMap {
     }
 
     public void update() {
-        leagueItemMap = leagueService.findAll().getEntries().stream()
+        leagueItemMap = leagueService.findAllChallengerLeagueItem().getContent().stream()
                 .collect(Collectors.toMap(RiotLeagueItemDto::getSummonerName,
-                        item -> summonerService.findAccountIdById(item.getSummonerId())));
+                        item -> summonerService.findAccountIdBySummonerId(item.getSummonerId())));
         //todo : 이부분 summonerName으로 찾으면 에러나는거 봐서는 닉변수정이 바로 안되는듯함
 
         it = leagueItemMap.keySet().iterator();
