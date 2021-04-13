@@ -14,8 +14,8 @@ public class LeagueListRemoverTasklet implements Tasklet {
     private final LeagueService leagueService;
 
     @Override
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        leagueService.updateLeagueRanking();
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+        leagueService.removeLeagueList();
 
         return RepeatStatus.FINISHED;
     }
