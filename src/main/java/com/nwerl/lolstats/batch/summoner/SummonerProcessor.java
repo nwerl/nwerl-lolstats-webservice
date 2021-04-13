@@ -12,8 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SummonerProcessor implements ItemProcessor<RiotSummonerDto, Summoner> {
     @Override
-    public Summoner process(RiotSummonerDto item) throws Exception {
-        //Thread.sleep(1400);
+    public Summoner process(RiotSummonerDto item) {
         return item.toEntity();
     }
 }

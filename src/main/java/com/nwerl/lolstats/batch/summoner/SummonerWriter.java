@@ -16,7 +16,7 @@ public class SummonerWriter implements ItemWriter<Summoner> {
     private final SummonerRepository summonerRepository;
 
     @Override
-    public void write(List<? extends Summoner> items) throws Exception {
+    public void write(List<? extends Summoner> items) {
         summonerRepository.saveAll(items);
     }
 }
