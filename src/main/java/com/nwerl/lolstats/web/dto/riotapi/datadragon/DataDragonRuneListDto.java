@@ -19,15 +19,7 @@ public class DataDragonRuneListDto {
     @Setter
     @Getter
     public static class RiotSlotsDto {
-        private List<RiotRunesDto> runes;
-
-        @NoArgsConstructor
-        @Setter
-        @Getter
-        public static class RiotRunesDto {
-            private Long id;
-            private String icon;
-        }
+        private List<RuneDto> runes;
     }
 
     public String getIcon() {

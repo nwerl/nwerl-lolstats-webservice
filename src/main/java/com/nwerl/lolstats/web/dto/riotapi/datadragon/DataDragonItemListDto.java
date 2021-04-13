@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -15,7 +15,7 @@ import java.util.Map;
 public class DataDragonItemListDto {
     private Map<String, Object> data;
 
-    public List<String> toList() {
-        return new ArrayList<>(data.keySet());
+    public List<ItemDto> toItemDtoList() {
+        return data.keySet().stream().map(ItemDto::new).collect(Collectors.toList());
     }
 }

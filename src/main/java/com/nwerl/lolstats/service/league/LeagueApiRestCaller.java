@@ -40,6 +40,6 @@ public class LeagueApiRestCaller implements LeagueApiCaller{
     public RiotLeagueListDto fetchChallengerLeagueListFromRiotApi() {
         log.info("Call RiotApi to Get ChallengerLeagueList");
 
-        return restTemplate.getForObject(challengerLeagueUri, RiotLeagueListDto.class);
+        return restTemplate.getForObject(CHALLENGER_LEAGUE_URI, RiotLeagueListDto.class);
     }
 }

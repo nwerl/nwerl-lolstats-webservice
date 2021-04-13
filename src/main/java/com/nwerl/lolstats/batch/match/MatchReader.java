@@ -2,58 +2,53 @@ package com.nwerl.lolstats.batch.match;
 
 import com.nwerl.lolstats.service.match.MatchService;
 import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
+
 
 @Slf4j
 @RequiredArgsConstructor
 @StepScope
 @Component
 public class MatchReader implements ItemReader<RiotMatchDto> {
+    private final RetryTemplate retryTemplate;
     private final MatchService matchService;
-    private StepExecution stepExecution;
 
-    private Long gameId;
+    @Value("#{jobParameters['accountId']}")
+    private String accountId;
+
+    private Boolean THIS_ACCOUNT_ID_IS_UPDATED = false;
 
     @Override
-    public RiotMatchDto read() throws InterruptedException {
-        if (thisGameIdIsUpdated())
+    public RiotMatchDto read() {
+        if(THIS_ACCOUNT_ID_IS_UPDATED)
             return null;
 
-        gameId = getGameId();
+        RiotMatchReferenceDto matchReference = getLastMatchReference(accountId);
 
-        return fetchMatchFromRiotApi(gameId);
-    }
-
-    public Long getGameId() {
-        ExecutionContext jobExecutionContext = stepExecution.getJobExecution().getExecutionContext();
-
-        return jobExecutionContext.getLong("GAME_ID");
-    }
-
-    private boolean thisGameIdIsUpdated() {
-        return gameId != null;
-    }
-
-    public RiotMatchDto fetchMatchFromRiotApi(Long gameId) throws InterruptedException {
-        try {
-            return matchService.fetchMatchFromRiotApi(gameId);
-        } catch (HttpClientErrorException.TooManyRequests e){
-            Thread.sleep(120000 + 20000);
-            return matchService.fetchMatchFromRiotApi(gameId);
+        if(matchReference == null) {
+            return null;
         }
 
+        RiotMatchDto matchDto = getMatch(matchReference.getGameId());
+
+        THIS_ACCOUNT_ID_IS_UPDATED = true;
+
+        return matchDto;
     }
 
-    @BeforeStep
-    public void setUp(StepExecution stepExecution) {
-        this.stepExecution = stepExecution;
+
+    private RiotMatchReferenceDto getLastMatchReference(String accountId) {
+        return retryTemplate.execute(arg -> matchService.fetchLastRankMatchReferenceFromRiotApi(accountId));
+    }
+
+    private RiotMatchDto getMatch(Long gameId) {
+        return retryTemplate.execute(arg -> matchService.fetchMatchFromRiotApi(gameId));
     }
 }

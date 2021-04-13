@@ -6,8 +6,8 @@ import org.springframework.web.client.HttpServerErrorException;
 
 @Retryable(value = HttpServerErrorException.class, maxAttempts = 3)
 public interface SummonerApiCaller {
-    public static final String summonerById = "/summoner/v4/summoners/%s";
-    public static final String summonerByName = "/summoner/v4/summoners/by-name/%s";
+    public static final String SUMMONER_BY_ID_URI = "/summoner/v4/summoners/%s";
+    public static final String SUMMONER_BY_NAME_URI = "/summoner/v4/summoners/by-name/%s";
 
     RiotSummonerDto fetchSummonerFromRiotApiByName(String name);
     RiotSummonerDto fetchSummonerFromRiotApiById(String id);

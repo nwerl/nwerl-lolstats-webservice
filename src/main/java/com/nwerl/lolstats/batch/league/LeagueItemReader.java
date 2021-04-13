@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Queue;
 @Configuration
 public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
     private final LeagueService leagueService;
+    private final RetryTemplate retryTemplate;
 
     private Queue<RiotLeagueItemDto> challengerLeagueItemQueue;
 
@@ -26,9 +28,6 @@ public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
     public RiotLeagueItemDto read() throws Exception{
         if(challengerLeagueItemQueueIsNotInitialized()) {
             this.challengerLeagueItemQueue = new LinkedList<>(fetchChallengerLeagueItemsFromRiotApi());
-
-            if(!challengerLeagueItemQueue.isEmpty())
-                leagueService.deleteAll();
         }
 
         RiotLeagueItemDto nextLeagueItem = challengerLeagueItemQueue.poll();
@@ -37,7 +36,7 @@ public class LeagueItemReader implements ItemReader<RiotLeagueItemDto> {
     }
 
     private List<RiotLeagueItemDto> fetchChallengerLeagueItemsFromRiotApi() {
-        return leagueService.fetchChallengerLeagueListFromRiotApi().getEntries();
+        return retryTemplate.execute(args-> leagueService.fetchChallengerLeagueListFromRiotApi().getEntries());
     }
 
     private Boolean challengerLeagueItemQueueIsNotInitialized() {

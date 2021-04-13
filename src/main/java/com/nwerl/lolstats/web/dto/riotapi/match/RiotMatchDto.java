@@ -1,6 +1,7 @@
 package com.nwerl.lolstats.web.dto.riotapi.match;
 
 import com.nwerl.lolstats.web.domain.match.Match;
+import com.nwerl.lolstats.web.domain.match.Player;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -263,9 +264,9 @@ public class RiotMatchDto {
     }
 
     public Match toEntity() {
-        List<Match.Player> list = new ArrayList<>();
+        List<Player> list = new ArrayList<>();
         for(int i=0;i<participantIdentities.size();i++) {
-            list.add(Match.Player.builder()
+            list.add(Player.builder()
                     .accountId(participantIdentities.get(i).player.getAccountId())
                     .summonerName(participantIdentities.get(i).player.getSummonerName())
                     .teamId(participants.get(i).getTeamId())
@@ -293,7 +294,7 @@ public class RiotMatchDto {
         }
 
         return Match.builder()
-                .gameId(gameId)
+                .id(gameId)
                 .seasonId(seasonId)
                 .mapId(mapId)
                 .gameType(gameType)

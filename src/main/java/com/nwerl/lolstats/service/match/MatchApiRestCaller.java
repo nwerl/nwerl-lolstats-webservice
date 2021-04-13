@@ -41,12 +41,12 @@ public class MatchApiRestCaller implements MatchApiCaller{
     public RiotMatchListDto fetchMatchListFromRiotApi(String accountId) {
         log.info("Call RiotApi to Get MatchReferences");
 
-        return restTemplate.getForObject(String.format(matchListUri, accountId), RiotMatchListDto.class);
+        return restTemplate.getForObject(String.format(MATCH_LIST_URI, accountId), RiotMatchListDto.class);
     }
 
     public RiotMatchDto fetchMatchFromRiotApi(Long gameId) {
         log.info("Call RiotApi to Get Match {}", gameId);
 
-        return restTemplate.getForObject(String.format(matchUri, String.valueOf(gameId)), RiotMatchDto.class);
+        return restTemplate.getForObject(String.format(MATCH_URI, String.valueOf(gameId)), RiotMatchDto.class);
     }
 }

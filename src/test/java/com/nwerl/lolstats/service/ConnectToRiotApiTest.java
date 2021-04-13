@@ -1,13 +1,14 @@
 package com.nwerl.lolstats.service;
 
+import com.nwerl.lolstats.batch.BatchApplication;
 import com.nwerl.lolstats.service.datadragon.DataDragonApiCaller;
 import com.nwerl.lolstats.service.datadragon.DataDragonService;
-import com.nwerl.lolstats.service.summoner.SummonerApiCaller;
-import com.nwerl.lolstats.web.dto.riotapi.summoner.RiotSummonerDto;
+import com.nwerl.lolstats.service.league.LeagueApiCaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -17,10 +18,11 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(SpringRunner.class)
+@MockBean(BatchApplication.class)
 @SpringBootTest
 public class ConnectToRiotApiTest {
     @Autowired
-    private SummonerApiCaller summonerApiCaller;
+    private LeagueApiCaller leagueApiCaller;
     @Autowired
     private DataDragonService dataDragonService;
     @Autowired
@@ -28,9 +30,7 @@ public class ConnectToRiotApiTest {
 
     @Test
     public void connect_to_Riot_Api() {
-        String name = "Vehumet";
-        RiotSummonerDto riotSummonerDto = summonerApiCaller.fetchSummonerFromRiotApiByName(name);
-        assertThat(name, is(riotSummonerDto.getName()));
+        leagueApiCaller.fetchChallengerLeagueListFromRiotApi();
     }
 
     @Test
