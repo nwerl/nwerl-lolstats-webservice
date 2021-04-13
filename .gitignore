@@ -5,3 +5,4 @@ build
 application-riotapi.properties
 application-mongodb.properties
 application-filepath.properties
+application-mysql.properties
