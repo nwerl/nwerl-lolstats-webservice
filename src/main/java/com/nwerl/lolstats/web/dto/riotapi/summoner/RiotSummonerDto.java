@@ -29,19 +29,9 @@ public class RiotSummonerDto {
         this.summonerLevel = summonerLevel;
     }
 
-    public RiotSummonerDto(Summoner summoner) {
-        this.id = summoner.getId();
-        this.accountId = summoner.getAccountId();
-        this.puuid = summoner.getPuuid();
-        this.name = summoner.getName();
-        this.profileIconId = summoner.getProfileIconId();
-        this.revisionDate = summoner.getRevisionDate();
-        this.summonerLevel = summoner.getSummonerLevel();
-    }
-
     public Summoner toEntity() {
         return Summoner.builder()
-                .id(id)
+                .summonerId(id)
                 .accountId(accountId)
                 .puuid(puuid)
                 .name(name)
