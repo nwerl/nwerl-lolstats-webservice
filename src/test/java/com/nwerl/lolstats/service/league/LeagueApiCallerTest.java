@@ -52,9 +52,4 @@ public class LeagueApiCallerTest {
         //then
         assertThat(riotLeagueListDto.getEntries().get(0).getSummonerName(), is(name));
     }
-
-    @Test
-    public void getChallengerLeagueList_5xxError_Test() {
-
-    }
 }
