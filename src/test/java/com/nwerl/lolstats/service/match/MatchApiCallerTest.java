@@ -38,7 +38,7 @@ public class MatchApiCallerTest {
         //given
         String accountId = "thisis1234!";
         Long gameId = 1234L;
-        String uri  = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"+accountId+"?api_key="+apiKey+"&endIndex=1";
+        String uri  = "https://kr.api.riotgames.com/lol/match/v4/matchlists/by-account/"+accountId+"?api_key="+apiKey;
         List<RiotMatchReferenceDto> list = new ArrayList<>();
         list.add(RiotMatchReferenceDto.builder().gameId(gameId).build());
         ObjectMapper objectMapper = new ObjectMapper();

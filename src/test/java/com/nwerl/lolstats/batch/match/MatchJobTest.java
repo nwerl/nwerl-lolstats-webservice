@@ -1,79 +1,101 @@
 package com.nwerl.lolstats.batch.match;
 
 import com.nwerl.lolstats.batch.BatchApplication;
-import com.nwerl.lolstats.batch.config.MatchJobConfig;
-import com.nwerl.lolstats.service.match.MatchService;
-import com.nwerl.lolstats.web.domain.match.Match;
-import com.nwerl.lolstats.web.domain.match.MatchListRepository;
+import com.nwerl.lolstats.service.match.MatchApiCaller;
+import com.nwerl.lolstats.web.domain.match.MatchReferenceRepository;
 import com.nwerl.lolstats.web.domain.match.MatchRepository;
+import com.nwerl.lolstats.web.domain.summoner.Summoner;
+import com.nwerl.lolstats.web.domain.summoner.SummonerRepository;
 import com.nwerl.lolstats.web.dto.riotapi.match.RiotMatchDto;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.QueueType;
+import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchListDto;
 import com.nwerl.lolstats.web.dto.riotapi.matchreference.RiotMatchReferenceDto;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @MockBean(BatchApplication.class)
-@EnableAutoConfiguration
-@SpringBootTest(classes = {MatchJobTestConfiguration.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@TestPropertySource(locations="classpath:application-test.properties")
+@SpringBootTest(classes = {MatchJobTestConfiguration.class, EmbeddedRedisConfig.class})
 public class MatchJobTest {
     @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils;
+    JobLauncherTestUtils jobLauncherTestUtils;
+    @MockBean
+    MatchApiCaller matchApiCaller;
     @Autowired
-    private MatchJobConfig matchJobConfig;
+    MatchRepository matchRepository;
     @Autowired
-    private MatchRepository matchRepository;
-    @MockBean
-    private MatchService matchService;
-    @MockBean
-    private MatchListRepository matchListRepository;
-    @MockBean
-    private ItemProcessor<RiotMatchDto, Match> itemProcessor;
-    private String accountId;
+    MatchReferenceRepository matchReferenceRepository;
+    @Autowired
+    SummonerRepository summonerRepository;
 
+    public static final int PLAYER_NUMBER = 10;
 
     @Test
     public void matchJob_Integration_Test() throws Exception {
         //given
-        accountId = "123";
-        Long gameId = Long.parseLong(accountId);
-
-        RiotMatchDto riotMatchDto = RiotMatchDto.builder().gameId(gameId).build();
-        when(matchService.fetchLastRankMatchReferenceFromRiotApi(accountId)).thenReturn(RiotMatchReferenceDto.builder().gameId(gameId).timestamp(gameId).build());
-        when(matchService.fetchMatchFromRiotApi(gameId)).thenReturn(riotMatchDto);
-        when(itemProcessor.process(riotMatchDto)).thenReturn(Match.builder().gameId(gameId).build());
-        when(matchService.existsByGameId(gameId)).thenReturn(false);
-
-        JobParameters param = new JobParametersBuilder()
-                .addString("dateTime", String.valueOf(System.currentTimeMillis()))
+        String accountId = "abc";
+        Long gameId = 123L;
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("time", String.valueOf(System.currentTimeMillis()))
                 .addString("accountId", accountId)
                 .toJobParameters();
 
+
+        List<RiotMatchReferenceDto> matchReferenceDtoList = Collections.singletonList(RiotMatchReferenceDto.builder()
+                .gameId(gameId).accountId(accountId).queue(QueueType.SOLO_RANK.getQueueCode()).build());
+        List<RiotMatchDto.ParticipantIdentityDto> participantIdentities = new ArrayList<>();
+        List<RiotMatchDto.ParticipantDto> participantDtos = new ArrayList<>();
+        for(int i=1;i<=PLAYER_NUMBER;i++) {
+            //MatchWriter에서 Summoner 테이블에 저장된 Player에 한해 MatchReference 테이블에 저장하기 때문에 미리 Summoner Row 저장해 둠.
+            summonerRepository.save(Summoner.builder().accountId(Integer.toString(i)).name(Integer.toString(i)).build());
+
+            RiotMatchDto.ParticipantIdentityDto.PlayerDto playerDto = RiotMatchDto.ParticipantIdentityDto.PlayerDto.builder().accountId(Integer.toString(i)).build();
+            participantIdentities.add(RiotMatchDto.ParticipantIdentityDto.builder().player(playerDto).build());
+            participantDtos.add(RiotMatchDto.ParticipantDto.builder()
+                    .runes(Collections.emptyList())
+                    .masteries(Collections.emptyList())
+                    .stats(RiotMatchDto.ParticipantDto.ParticipantStatsDto.builder().build())
+                    .timeline(RiotMatchDto.ParticipantDto.ParticipantTimelineDto.builder().build())
+                    .build());
+        }
+
+        RiotMatchDto riotMatchDto = RiotMatchDto.builder().gameId(gameId).queueId(QueueType.SOLO_RANK.getQueueCode())
+                .participantIdentities(participantIdentities).participants(participantDtos).build();
+
+        given(matchApiCaller.fetchMatchListFromRiotApi(accountId))
+                .willReturn(RiotMatchListDto.builder().matches(matchReferenceDtoList).build());
+        given(matchApiCaller.fetchMatchFromRiotApi(gameId))
+                .willReturn(riotMatchDto);
+
         //when
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(param);
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         //then
-        assertThat(matchRepository.existsByGameId(gameId), is(true));
-    }
-
-    @After
-    public void removeTestData() {
-        matchRepository.deleteById(Long.parseLong(accountId));
+        assertThat(jobExecution.getExitStatus(), is(ExitStatus.COMPLETED));
+        assertThat(matchRepository.findById(gameId).get().getId(), is(gameId));
+        for(int i=1;i<=PLAYER_NUMBER;i++) {
+            assertThat(matchReferenceRepository.findAllBySummoner_AccountId(Integer.toString(i), PageRequest.of(0, 1)).getContent().get(0).getSummoner().getAccountId(),
+                    is(Integer.toString(i)));
+        }
     }
 }

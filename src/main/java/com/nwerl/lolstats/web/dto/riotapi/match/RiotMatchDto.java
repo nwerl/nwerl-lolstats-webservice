@@ -93,7 +93,7 @@ public class RiotMatchDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    static class ParticipantDto {
+    public static class ParticipantDto {
         private Integer participantId;
         private Integer championId;
         private List<RuneDto> runes;
@@ -265,6 +265,7 @@ public class RiotMatchDto {
 
     public Match toEntity() {
         List<Player> list = new ArrayList<>();
+
         for(int i=0;i<participantIdentities.size();i++) {
             list.add(Player.builder()
                     .accountId(participantIdentities.get(i).player.getAccountId())
