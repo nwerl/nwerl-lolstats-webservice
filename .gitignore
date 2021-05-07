@@ -3,6 +3,7 @@
 .idea
 build
 application-riotapi.properties
-application-mongodb.properties
+application-test.properties
+application-redis.properties
 application-filepath.properties
 application-mysql.properties
