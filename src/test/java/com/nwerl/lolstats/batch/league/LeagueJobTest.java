@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.LinkedList;
@@ -32,7 +31,6 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @MockBean(BatchApplication.class)
-@TestPropertySource(locations="classpath:application-test.properties")
 @SpringBootTest(classes = {LeagueJobTestConfiguration.class})
 public class LeagueJobTest {
     @Autowired
