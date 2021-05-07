@@ -6,3 +6,4 @@ application-riotapi.properties
 application-redis.properties
 application-filepath.properties
 application-mysql.properties
+application-real-mysql.properties
