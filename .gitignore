@@ -3,7 +3,6 @@
 .idea
 build
 application-riotapi.properties
-application-test.properties
 application-redis.properties
 application-filepath.properties
 application-mysql.properties
