@@ -1,9 +1,11 @@
 # Project exclude paths
 .gradle
 .idea
+.p12
 build
 application-riotapi.properties
 application-redis.properties
 application-filepath.properties
 application-mysql.properties
 application-real-mysql.properties
+application-ssl.properties
