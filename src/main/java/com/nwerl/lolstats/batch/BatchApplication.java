@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -13,11 +15,11 @@ public class BatchApplication {
     private final BatchJobLauncher batchJobLauncher;
     private final LeagueItemMap leagueItemMap;
 
-//    @Scheduled(fixedDelay = Long.MAX_VALUE)
-//    public void initLeagueList() throws Exception {
-//        batchJobLauncher.leagueLaunch();
-//        leagueItemMap.update();
-//    }
+    @PostConstruct
+    public void initLeagueList() throws Exception {
+        batchJobLauncher.leagueLaunch();
+        leagueItemMap.update();
+    }
 
     @Scheduled(cron = "0 0 * * * *")
     public void leagueJobExecute() throws Exception {
