@@ -33,10 +33,6 @@ echo "> $JAR_NAME 에 실행권한 추가"
 
 chmod +x $JAR_NAME
 
-echo "> 인증서 파일 복사"
-
-cp $APP/keystore.p12 $CLASSPATH/keystore.p12
-
 echo "> $JAR_NAME 실행"
 
 nohup java -jar \
