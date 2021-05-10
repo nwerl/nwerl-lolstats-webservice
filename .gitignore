@@ -8,4 +8,3 @@ application-filepath.properties
 application-mysql.properties
 application-real-mysql.properties
 application-ssl.properties
-keystore.p12
