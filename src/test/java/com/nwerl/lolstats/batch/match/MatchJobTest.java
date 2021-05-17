@@ -33,7 +33,7 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @MockBean(BatchApplication.class)
-@SpringBootTest(classes = {MatchJobTestConfiguration.class, EmbeddedRedisConfig.class})
+@SpringBootTest(classes = {MatchJobTestConfiguration.class})
 public class MatchJobTest {
     @Autowired
     JobLauncherTestUtils jobLauncherTestUtils;
