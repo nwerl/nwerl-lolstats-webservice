@@ -15,20 +15,22 @@ public class BatchApplication {
     private final BatchJobLauncher batchJobLauncher;
     private final LeagueItemMap leagueItemMap;
 
+    //PostConstruct에서는 Checked Exception Throw하면 절대 안된다!!
+    //PostConstruct는 Bean의 init 작업이기 때문에 실패하면 애플리케이션이 아예 안뜸.
     @PostConstruct
-    public void initLeagueList() throws Exception {
+    public void initLeagueList() {
         batchJobLauncher.leagueLaunch();
         leagueItemMap.update();
     }
 
     @Scheduled(cron = "0 0 * * * *")
-    public void leagueJobExecute() throws Exception {
+    public void leagueJobExecute() {
         batchJobLauncher.leagueLaunch();
     }
 
     @Scheduled(initialDelay = 3000, fixedDelay = 100)
-    public void matchJobExecute() throws Exception {
+    public void matchJobExecute() {
         String summonerName = leagueItemMap.getNextSummonerName();
-        batchJobLauncher.matchLaunch(summonerName, leagueItemMap.getAccountId(summonerName));
+        batchJobLauncher.matchLaunch(leagueItemMap.getAccountId(summonerName));
     }
 }
