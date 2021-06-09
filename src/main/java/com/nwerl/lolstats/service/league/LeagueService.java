@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -42,19 +41,6 @@ public class LeagueService {
 
     public RiotLeagueListDto fetchChallengerLeagueListFromRiotApi() {
         return leagueApiCaller.fetchChallengerLeagueListFromRiotApi();
-    }
-
-    public void removeLeagueList() {
-        Page<LeagueItem> leagueItemList;
-
-        do {
-            leagueItemList = Optional.of(leagueItemRepository.findAll(PageRequest.of(0, CHALLENGER_LIMIT))).orElse(Page.empty());
-
-            if(leagueItemList.isEmpty())
-                break;
-
-            leagueItemRepository.deleteInBatch(leagueItemList.getContent());
-        } while(!leagueItemList.isLast());
     }
 
     @Cacheable(value = "ranking")
