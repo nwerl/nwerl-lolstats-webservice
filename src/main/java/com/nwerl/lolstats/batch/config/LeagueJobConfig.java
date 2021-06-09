@@ -1,6 +1,6 @@
 package com.nwerl.lolstats.batch.config;
 
-import com.nwerl.lolstats.batch.league.LeagueListRemoverTasklet;
+import com.nwerl.lolstats.service.league.LeagueService;
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import com.nwerl.lolstats.web.dto.riotapi.league.RiotLeagueItemDto;
@@ -26,21 +26,12 @@ public class LeagueJobConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    private static final int CHALLENGER_SUMMONER_NUMBER = 300;
-
-    @Bean
-    public Step removeOldLeagueListStep(LeagueListRemoverTasklet leagueListRemoverTasklet) {
-        return stepBuilderFactory.get("removeOldLeagueListStep")
-                .tasklet(leagueListRemoverTasklet)
-                .build();
-    }
-
     @Bean
     public Step leagueListStep(ItemReader<RiotLeagueItemDto> leagueReader,
                                ItemProcessor<RiotLeagueItemDto, LeagueItem> leagueProcessor,
                                ItemWriter<LeagueItem>  leagueWriter) {
         return stepBuilderFactory.get("leagueListReader")
-                .<RiotLeagueItemDto, LeagueItem>chunk(CHALLENGER_SUMMONER_NUMBER)
+                .<RiotLeagueItemDto, LeagueItem>chunk(LeagueService.CHALLENGER_LIMIT)
                 .reader(leagueReader)
                 .processor(leagueProcessor)
                 .writer(leagueWriter)
@@ -53,7 +44,7 @@ public class LeagueJobConfig {
                             ItemProcessor<RiotSummonerDto, Summoner> summonerProcessor,
                             ItemWriter<Summoner> summonerWriter) {
         return stepBuilderFactory.get("summonerStep")
-                .<RiotSummonerDto, Summoner>chunk(CHALLENGER_SUMMONER_NUMBER)
+                .<RiotSummonerDto, Summoner>chunk(LeagueService.CHALLENGER_LIMIT)
                 .reader(summonerReader)
                 .processor(summonerProcessor)
                 .writer(summonerWriter)
@@ -62,13 +53,11 @@ public class LeagueJobConfig {
 
 
     @Bean
-    public Job leagueJob(@Qualifier("removeOldLeagueListStep") Step removeOldLeagueListStep,
-                         @Qualifier("leagueListStep") Step leagueListStep,
+    public Job leagueJob(@Qualifier("leagueListStep") Step leagueListStep,
                          @Qualifier("summonerStep") Step summonerStep) {
         return jobBuilderFactory.get("leagueJob")
                 .incrementer(new RunIdIncrementer())
-                .start(removeOldLeagueListStep)
-                .next(leagueListStep).on("FAILED").end()
+                .start(leagueListStep).on("FAILED").end()
                 .from(leagueListStep).on("*").to(summonerStep)
                 .end()
                 .build();
