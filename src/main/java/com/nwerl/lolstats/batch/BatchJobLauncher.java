@@ -80,6 +80,9 @@ public class BatchJobLauncher {
     }
 
     private boolean needSlackMessage(JobExecution execution) {
+        if(execution == null)
+            return false;
+
         boolean is401Or403 = execution.getAllFailureExceptions().stream()
                 .anyMatch(t -> t.getClass().equals(HttpClientErrorException.Unauthorized.class) ||
                         t.getClass().equals(HttpClientErrorException.Forbidden.class));

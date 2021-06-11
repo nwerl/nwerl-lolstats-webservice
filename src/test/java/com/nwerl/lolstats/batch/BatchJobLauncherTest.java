@@ -6,6 +6,7 @@ import com.nwerl.lolstats.config.EmbeddedRedisConfig;
 import com.nwerl.lolstats.config.RedisConfig;
 import com.nwerl.lolstats.service.league.LeagueApiCaller;
 import com.nwerl.lolstats.service.league.LeagueService;
+import com.nwerl.lolstats.service.slack.SlackSender;
 import com.nwerl.lolstats.web.domain.league.LeagueItem;
 import com.nwerl.lolstats.web.domain.league.LeagueItemRepository;
 import org.junit.Test;
@@ -50,6 +51,8 @@ public class BatchJobLauncherTest {
     Job job;
     @MockBean
     JobLauncher jobLauncher;
+    @MockBean
+    SlackSender slackSender;
 
     @Test
     public void jobLaunch_Retry_Test() throws Exception{
