@@ -48,7 +48,7 @@ public class MatchWriter implements ItemWriter<Match> {
                 if(zSetOps.size(accountId) == 0)
                     matchService.setMatchCache(accountId);
                 else
-                    zSetOps.add(accountId, item.of(accountId), item.getId());
+                    zSetOps.add(accountId, item.of(accountId), item.getGameCreation());
             }
         }
     }

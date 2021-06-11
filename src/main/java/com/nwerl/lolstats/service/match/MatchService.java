@@ -73,7 +73,7 @@ public class MatchService {
                 .stream().map(m -> m.getMatch().of(accountId)).collect(Collectors.toList());
 
         for(MatchDto dto : list)
-            zSetOps.add(accountId, dto, dto.getGameId());
+            zSetOps.add(accountId, dto, dto.getGameCreation());
     }
 
     public List<MatchDto> getMatchCache(String accountId) {
