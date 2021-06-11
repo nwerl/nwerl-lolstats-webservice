@@ -77,7 +77,7 @@ public class MatchJobTest {
                     .build());
         }
 
-        RiotMatchDto riotMatchDto = RiotMatchDto.builder().gameId(gameId).queueId(QueueType.SOLO_RANK.getQueueCode())
+        RiotMatchDto riotMatchDto = RiotMatchDto.builder().gameId(gameId).gameCreation(1L).queueId(QueueType.SOLO_RANK.getQueueCode())
                 .participantIdentities(participantIdentities).participants(participantDtos).build();
 
         given(matchApiCaller.fetchMatchListFromRiotApi(accountId))
