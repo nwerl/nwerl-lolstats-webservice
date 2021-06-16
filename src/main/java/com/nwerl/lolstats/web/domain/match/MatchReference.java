@@ -5,6 +5,7 @@ import com.nwerl.lolstats.web.domain.summoner.Summoner;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -17,6 +18,9 @@ public class MatchReference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
+    private Long gameCreation;
+
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "accountId")
     private Summoner summoner;
@@ -26,7 +30,8 @@ public class MatchReference {
     private Match match;
 
     @Builder
-    public MatchReference(Summoner summoner, Match match) {
+    public MatchReference(Long gameCreation, Summoner summoner, Match match) {
+        this.gameCreation = gameCreation;
         this.summoner = summoner;
         this.match = match;
     }
