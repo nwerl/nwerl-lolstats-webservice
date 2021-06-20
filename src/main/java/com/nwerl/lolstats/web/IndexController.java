@@ -1,7 +1,7 @@
 package com.nwerl.lolstats.web;
 
 import com.nwerl.lolstats.service.league.LeagueService;
-import com.nwerl.lolstats.service.match.MatchService;
+import com.nwerl.lolstats.service.match.MatchReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class IndexController {
     private final LeagueService leagueService;
-    private final MatchService matchService;
+    private final MatchReferenceService matchReferenceService;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -21,8 +21,7 @@ public class IndexController {
     }
 
     @GetMapping("/summoner/{summonerName}/matches")
-    public String summonerMatchList(Model model, @PathVariable String summonerName) {
-        model.addAttribute("matches", matchService.getMatchesByName(summonerName));
+    public String summonerMatchList(@PathVariable String summonerName) {
         return "summonerInfo";
     }
 }
