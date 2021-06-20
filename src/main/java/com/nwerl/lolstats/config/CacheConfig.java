@@ -12,22 +12,39 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @EnableCaching
 @Configuration
 public class CacheConfig {
     private final RedisConnectionFactory connectionFactory;
-    private static final int ONE_HOUR = 60 * 60 * 1000;
+
+    public static final long FIRST_MATCH_PAGE_TTL_MINUTES = 60;
+    public static final long MATCH_PAGE_TTL_MINUTES = 10;
 
     @Bean
     public CacheManager redisCacheManager() {
-        RedisCacheConfiguration defaultConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(connectionFactory)
-                .cacheDefaults(defaultConfiguration)
+                .cacheDefaults(defaultConfig())
+                .withInitialCacheConfigurations(configMap())
                 .build();
+    }
+
+    private RedisCacheConfiguration defaultConfig() {
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }
+
+    private Map<String, RedisCacheConfiguration> configMap() {
+        Map<String, RedisCacheConfiguration> cacheConfig = new HashMap<>();
+        cacheConfig.put("firstMatchPage", defaultConfig().entryTtl(Duration.ofMinutes(FIRST_MATCH_PAGE_TTL_MINUTES)));
+        cacheConfig.put("matchPage", defaultConfig().entryTtl(Duration.ofMinutes(MATCH_PAGE_TTL_MINUTES)));
+
+        return cacheConfig;
     }
 }
