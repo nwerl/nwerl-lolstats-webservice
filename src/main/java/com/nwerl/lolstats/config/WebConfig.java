@@ -8,10 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/**")
-//                .addResourceLocations("classpath:/static/");
-
-        registry.addResourceHandler("/**")
+        registry.addResourceHandler("/cdn/**")
                 .addResourceLocations("https://dxseber2rziw8.cloudfront.net");
     }
 }
