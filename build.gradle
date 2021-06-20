@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.7.RELEASE'
+        springBootVersion = '2.2.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -36,6 +36,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     compile('it.ozimov:embedded-redis:0.7.2')
     compile('org.mariadb.jdbc:mariadb-java-client')
+    compile('org.springframework.boot:spring-boot-starter-hateoas')
     runtime('com.h2database:h2')
     runtime('mysql:mysql-connector-java')
     testCompile('org.springframework.boot:spring-boot-starter-test')
