@@ -1,27 +1,6 @@
 {{>layout/header}}
 <h1>소환사 대전 기록</h1>
 <div class="container">
-    {{#matches}}
-    <div class="row bg-primary  mt-2 pt-5">
-            <div class="col-md-12">
-                {{#owner}}
-                    {{gameMode}}
-                    {{win}}
-                    <img src="/images/champions/{{championId}}.png"/>
-                    <img src="/images/spells/{{spell1Id}}.png"/>
-                    <img src="/images/spells/{{spell2Id}}.png"/>
-                    <img src="/images/items/{{item0}}.png"/>
-                    <img src="/images/items/{{item1}}.png"/>
-                    <img src="/images/items/{{item2}}.png"/>
-                    <img src="/images/items/{{item3}}.png"/>
-                    <img src="/images/items/{{item4}}.png"/>
-                    <img src="/images/items/{{item5}}.png"/>
-                    <img src="/images/runes/{{perkPrimaryStyle}}.png"/>
-                    <img src="/images/rune_styles/{{perkSubStyle}}.png"/>
-                    {{kills}} / {{deaths}} / {{assists}}
-                {{/owner}}
-            </div>
-    </div>
-    {{/matches}}
 </div>
+<button type="button" class="btn btn-primary" id="btn-read">등록</button>
 {{>layout/footer}}
