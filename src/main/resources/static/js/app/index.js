@@ -20,7 +20,13 @@ var main = {
                 var owner = msg._embedded.matchDtoList[i].owner;
 
                 var row = document.createElement('div');
-                row.setAttribute('class', 'row bg-primary  mt-2 pt-5');
+
+                if(owner.win == true) {
+                    row.setAttribute('class', 'row bg-primary  mt-2 pt-5');
+                } else {
+                    row.setAttribute('class', 'row bg-danger  mt-2 pt-5');
+                }
+
                 var col = document.createElement('div');
                 col.setAttribute('class', 'col-md-12');
                 col.setAttribute('id', msg._embedded.matchDtoList[i].gameId);
